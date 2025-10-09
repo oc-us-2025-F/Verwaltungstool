@@ -131,5 +131,28 @@ def update_labels(counter_label, gesamt=False):
             text=f"Technisch: {technisch}   Allgemein: {algemein}"
         )
 
+def get_counter_display_text():
+    """
+    Erzeugt den formatierten Textstring für das PySide6/Qt Label.
+    Verwendet die Zähler für heute und die Gesamtzahlen (wie im Original-Code).
+    Returns:
+        str: Der formatierte Text, z.B. "Gesamt: 15 | Technisch: 10 | Allgemein: 5"
+    """
+    technisch = get_counter("technisch")
+    algemein = get_counter("algemein")
+    
+    # Wir nutzen die get_counter_total Funktion
+    technisch_total = get_counter_total("technisch")
+    algemein_total = get_counter_total("algemein")
+    
+    total_heute = technisch + algemein
+    total_gesamt = technisch_total + algemein_total
+    
+    return (
+        f"Gesamt (Heute): {total_heute} | Gesamt (Alle Zeit): {total_gesamt}\n"
+        f"Technisch (Heute): {technisch} (Gesamt: {technisch_total}) | "
+        f"Allgemein (Heute): {algemein} (Gesamt: {algemein_total})"
+    )
 
-        #fertig
+
+        
