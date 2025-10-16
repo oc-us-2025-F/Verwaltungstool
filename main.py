@@ -1,70 +1,165 @@
 from PySide6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QPushButton, QVBoxLayout,
-    QHBoxLayout, QGroupBox, QLabel, QGridLayout
+    QHBoxLayout, QLabel, QInputDialog, QLineEdit, QFrame
 )
+from PySide6.QtCore import QTimer, Qt
 import sys
-#from counter import counter_main, git_funktions, under_funktions,
-from counter.counter_main import start_application 
-from counter import git_funktions, under_funktions
+from news.news_main import get_news, delete_old_news, add_news_item
+# Importiere deine echten Git-Methoden!
+# from news.DBsetup import git_pull_newsdb, git_push_newsdb, git_merge_newsdb
 
-#nivht fertig
-#TODO: Buttons mit Funktionen belegen, Git Befehle einbauen,verbindungen fertigen zu den nächsten fenstern,news funktion schreiben einbinden,mekrsätze funktion schreiben mit auto rotation und steuerung
-#TODO: Design verbessern, prüfen ob alles funktioniert, layout anpassen
+def git_pull():
+    # Platzhalter für echten Git Pull
+    print("Git Pull ausgeführt")
+def git_push():
+    # Platzhalter für echten Git Push
+    print("Git Push ausgeführt")
+def git_merge():
+    # Platzhalter für echten Git Merge
+    print("Git Merge ausgeführt")
 
-
-class InfoFenster(QWidget):
-    def __init__(self, titel):
+class NewsFenster(QWidget):
+    def __init__(self):
         super().__init__()
+        self.news_list = get_news()
+        self.current_index = 0
+
         layout = QVBoxLayout()
-        label = QLabel(titel)
-        layout.addWidget(label)
+        self.label = QLabel(self.news_list[self.current_index])
+        self.label.setWordWrap(True)
+        layout.addWidget(self.label)
+
         button_layout = QHBoxLayout()
-        # Navigation Buttons für News
-        button_layout.addWidget(QPushButton("Vor"))
-        button_layout.addWidget(QPushButton("Zurück"))
-        button_layout.addWidget(QPushButton("Neu"))
+        btn_prev = QPushButton("Zurück")
+        btn_prev.clicked.connect(self.show_prev)
+        btn_new = QPushButton("Neu")
+        btn_new.clicked.connect(self.add_news)
+        btn_next = QPushButton("Nächste")
+        btn_next.clicked.connect(self.show_next_immediately)
+        button_layout.addWidget(btn_prev)
+        button_layout.addWidget(btn_new)
+        button_layout.addWidget(btn_next)
         layout.addLayout(button_layout)
         self.setLayout(layout)
+
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.show_next)
+        self.timer.start(45000)  # 45 Sekunden
+
+    def show_prev(self):
+        self.current_index = (self.current_index - 1) % len(self.news_list)
+        self.label.setText(self.news_list[self.current_index])
+
+    def show_next(self):
+        self.current_index = (self.current_index + 1) % len(self.news_list)
+        self.label.setText(self.news_list[self.current_index])
+
+    def show_next_immediately(self):
+        self.timer.stop()
+        self.show_next()
+        self.timer.start(45000)
+
+    def reload_news(self):
+        self.news_list = get_news()
+        self.current_index = 0
+        self.label.setText(self.news_list[self.current_index])
+
+    def add_news(self):
+        text, ok = QInputDialog.getText(self, "Neue News", "News-Text eingeben:", QLineEdit.Normal)
+        if ok and text.strip():
+            from datetime import datetime
+            created_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            # add_news_item erwartet (text, db_path), ggf. anpassen!
+            add_news_item(text, "news/news.db", created_at)
+            git_push()
+            self.reload_news()
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Verwaltungstool")
 
+        # --- Git- und News-Initialisierung beim Start ---
+        git_pull()
+        git_merge()
+        delete_old_news("news/news.db")
+        git_push()
+
         main_widget = QWidget()
         main_layout = QVBoxLayout()
 
-        # oobere Buttons
+        # Obere Buttons
         top_layout = QHBoxLayout()
         btn_counter = QPushButton("Störungs Counter")
         btn_counter.clicked.connect(self.oeffne_counter)
-
         top_layout.addWidget(btn_counter)
         top_layout.addWidget(QPushButton("Platzhalter quiz"))
-        top_layout.addWidget(QPushButton("Platzhalter passwotgenerator"))
+        btn_password = QPushButton("Passwortgenerator")
+        btn_password.clicked.connect(self.oeffne_password)
+        top_layout.addWidget(btn_password)
         top_layout.addWidget(QPushButton("Platzhalter Kalender"))
         main_layout.addLayout(top_layout)
 
-        # mittlere Info-Fenster
+        # Mittlere Info-Fenster
         middle_layout = QHBoxLayout()
-        middle_layout.addWidget(InfoFenster("news-Fenster Links"))
-        middle_layout.addWidget(InfoFenster("merksaetze-Fenster Rechts"))
+        self.news_fenster = NewsFenster()
+        middle_layout.addWidget(self.news_fenster)
+        middle_layout.addWidget(QLabel("merksaetze-Fenster Rechts"))  # Platzhalter
         main_layout.addLayout(middle_layout)
 
-        # Untere Buttons steuerung main fenster
+        # Untere Buttons
         bottom_layout = QHBoxLayout()
+        # Branding-Box unten links
+        branding_layout = QHBoxLayout()
+        branding_frame = QFrame()
+        branding_frame.setStyleSheet("background-color: white; border: 1px solid #ccc;")
+        branding_inner = QHBoxLayout()
+        logo = QLabel()
+        logo.setFixedSize(15, 15)
+        logo.setStyleSheet("background-color: #bbb; border: 1px solid #888;")  # Platzhalter für Logo
+        branding_inner.addWidget(logo)
+        branding_text = QLabel("MAKE BY UMSCHULUNGS GRUPPE FROM 03.2025-03.2027")
+        branding_inner.addWidget(branding_text)
+        branding_frame.setLayout(branding_inner)
+        branding_layout.addWidget(branding_frame)
+        branding_layout.addStretch()
+        bottom_layout.addLayout(branding_layout)
+
         bottom_layout.addStretch()
-        bottom_layout.addWidget(QPushButton("Beenden")) #git push und pull ausführen dann beenden
-        bottom_layout.addWidget(QPushButton("Aktualisieren")) #git pull und push nutzen
+        btn_beenden = QPushButton("Beenden")
+        btn_beenden.clicked.connect(self.beenden)
+        bottom_layout.addWidget(btn_beenden)
+        btn_aktualisieren = QPushButton("Aktualisieren")
+        btn_aktualisieren.clicked.connect(self.git_update)
+        bottom_layout.addWidget(btn_aktualisieren)
         main_layout.addLayout(bottom_layout)
 
         main_widget.setLayout(main_layout)
         self.setCentralWidget(main_widget)
-        
+
+        # Timer für automatisches Git Pull alle 60 Sekunden
+        self.git_timer = QTimer(self)
+        self.git_timer.timeout.connect(self.git_auto_pull)
+        self.git_timer.start(60000)  # 60 Sekunden
+
     def oeffne_counter(self):
-        self.counter_window = start_application()
-        self.counter_window.exec()
-        self.counter_window.show()
+        pass  # Platzhalter
+
+    def oeffne_password(self):
+        pass  # Platzhalter
+
+    def git_update(self):
+        git_pull()
+        git_merge()
+        self.news_fenster.reload_news()
+
+    def git_auto_pull(self):
+        git_pull()
+        self.news_fenster.reload_news()
+
+    def beenden(self):
+        git_push()
+        QApplication.quit()
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
