@@ -1,26 +1,51 @@
 import sqlite3
-import time
-from datetime import datetime, timedelta
+import subprocess
 
-def zitat_main(db_path="Zitat.db"):#<-- Pfad zur SQLite-Datenbank
+
+
+
+def get_quotes(db_path="quotes/quotes.db"):
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
-    cursor.execute("SELECT text, created_at From news WHERE datetime(created_at) >= ? ORDER BY datetime(created_at) DESC", (cutoff_date.strftime("%Y-%m-%d %H:%M:%S"),))
-    news_items = cursor.fetchall()
+    cursor.execute ("SELECT text FROM Zitat")
+    quotes = cursor.fetchall()
     conn.close()
-    if not news_items:
-        return "noch keine Zitate vorhanden" 
-    text = [row[0] for row in news_items]
-    time.sleep(60)  # Kurze Pause, um die GUI nicht zu überfordern und es lesbar zu halten
-    return "\n\n".join(text)
+    return [row[0] for row in quotes] if quotes else ["Keine Zitate."]
 
-def add_zitat_item(text, db_path="Zitat.db"):
+def add_quotes(text, db_path="quotes/quotes.db"):
     if not text.strip():
         return False
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
-    cursor.execute ("INSERT INTO Zitat (text, created_at) VALUES (?, ?)", (news_text.strip(), created_at))
+    cursor.execute ("INSERT INTO Zitat (text) VALUES (?)", (text.strip()))
     conn.commit()
     conn.close()
     return True
+
+def git_pull_quotesdb():
+    """Holt die aktuelle quotes.db von Git."""
+    try:
+        subprocess.run(["git", "pull"], check=True)
+        print("Git Pull für quotes.db ausgeführt.")
+    except Exception as e:
+        print(f"Fehler bei git pull: {e}")
+
+def git_push_quotesdb(commit_message="Update quotes.db"):
+    """Pusht die aktuelle quotes.db zu Git."""
+    try:
+        subprocess.run(["git", "add", "news.db"], check=True)
+        subprocess.run(["git", "commit", "-m", commit_message], check=True)
+        subprocess.run(["git", "push"], check=True)
+        print("Git Push für quotes.db ausgeführt.")
+    except Exception as e:
+        print(f"Fehler bei git push: {e}")
+
+def git_merge_quotesdb():
+    """Führt ein git merge aus (z.B. nach Pull)."""
+    try:
+        subprocess.run(["git", "merge"], check=True)
+        print("Git Merge für quotes.db ausgeführt.")
+    except Exception as e:
+        print(f"Fehler bei git merge: {e}")
+
 

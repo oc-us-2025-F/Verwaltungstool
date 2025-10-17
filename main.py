@@ -5,8 +5,8 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import QTimer, Qt
 import sys
 from news.news_main import get_news, delete_old_news, add_news_item
-# Importiere deine echten Git-Methoden!
-# from news.DBsetup import git_pull_newsdb, git_push_newsdb, git_merge_newsdb
+# Quotes-Import
+from quotes.quotes_main import get_quotes, add_quotes as add_quote_item
 
 def git_pull():
     # Platzhalter für echten Git Pull
@@ -74,6 +74,59 @@ class NewsFenster(QWidget):
             git_push()
             self.reload_news()
 
+class QuotesFenster(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.quotes_list = get_quotes()
+        self.current_index = 0
+
+        layout = QVBoxLayout()
+        self.label = QLabel(self.quotes_list[self.current_index])
+        self.label.setWordWrap(True)
+        layout.addWidget(self.label)
+
+        button_layout = QHBoxLayout()
+        btn_prev = QPushButton("Zurück")
+        btn_prev.clicked.connect(self.show_prev)
+        btn_new = QPushButton("Neu")
+        btn_new.clicked.connect(self.add_quote)
+        btn_next = QPushButton("Nächste")
+        btn_next.clicked.connect(self.show_next_immediately)
+        button_layout.addWidget(btn_prev)
+        button_layout.addWidget(btn_new)
+        button_layout.addWidget(btn_next)
+        layout.addLayout(button_layout)
+        self.setLayout(layout)
+
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.show_next)
+        self.timer.start(45000)  # 45 Sekunden
+
+    def show_prev(self):
+        self.current_index = (self.current_index - 1) % len(self.quotes_list)
+        self.label.setText(self.quotes_list[self.current_index])
+
+    def show_next(self):
+        self.current_index = (self.current_index + 1) % len(self.quotes_list)
+        self.label.setText(self.quotes_list[self.current_index])
+
+    def show_next_immediately(self):
+        self.timer.stop()
+        self.show_next()
+        self.timer.start(45000)
+
+    def reload_quotes(self):
+        self.quotes_list = get_quotes()
+        self.current_index = 0
+        self.label.setText(self.quotes_list[self.current_index])
+
+    def add_quote(self):
+        text, ok = QInputDialog.getText(self, "Neues Zitat", "Zitat-Text eingeben:", QLineEdit.Normal)
+        if ok and text.strip():
+            add_quote_item(text, "quotes/quotes.db")
+            git_push()
+            self.reload_quotes()
+
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -103,8 +156,9 @@ class MainWindow(QMainWindow):
         # Mittlere Info-Fenster
         middle_layout = QHBoxLayout()
         self.news_fenster = NewsFenster()
+        self.quotes_fenster = QuotesFenster()
         middle_layout.addWidget(self.news_fenster)
-        middle_layout.addWidget(QLabel("merksaetze-Fenster Rechts"))  # Platzhalter
+        middle_layout.addWidget(self.quotes_fenster)
         main_layout.addLayout(middle_layout)
 
         # Untere Buttons
@@ -166,3 +220,6 @@ if __name__ == "__main__":
     window = MainWindow()
     window.show()
     sys.exit(app.exec())
+
+
+    #TODO: funktionen auslagern in eigene dateien
