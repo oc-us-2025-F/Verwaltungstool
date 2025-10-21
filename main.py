@@ -11,7 +11,7 @@ from counter.counter_main import CounterDialog
 from password.password_main import PasswordWindow
 from quiz.quiz_main import QuizScoreWindow
 from utils.git_utils import git_pull, git_push, git_merge
-from calendar.date_attendance_main import AttendanceCalendar
+from attendance_calendar.date_attendance_main import AttendanceCalendar
 
 
 class NewsFenster(QWidget):
