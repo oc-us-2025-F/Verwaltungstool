@@ -5,7 +5,7 @@ import subprocess
 
 #GIT_REPRO_URL = ""
 DB_FILENAME = "quiz.db"
-#Counter_FILE = "counter.json"
+Counter_FILE = "quiz_scores.json.json"
 #BRANCH = "main"():
    
 #def get_db_file_pull():
@@ -41,3 +41,4 @@ def create_counter_file():
         print("Counter file already exists.") 
 
 create_DB()
+create_counter_file()

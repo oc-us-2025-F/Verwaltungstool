@@ -75,18 +75,18 @@ class AttendanceCalendar(QWidget):
         self.status_label.setText(f"Status am {date_str}: {status or 'Kein Status gesetzt'}")
 
     def set_status_for_selected_date(self):
-    qdate = self.calendar.selectedDate()
-    if not qdate.isValid():
-        print(f"Ungültiges Datum: {qdate}")
-        return  # nichts speichern
+        qdate = self.calendar.selectedDate()
+        if not qdate.isValid():
+            print(f"Ungültiges Datum: {qdate}")
+            return  # nichts speichern
 
-    date_str = qdate.toString("yyyy-MM-dd")
-    status = self.combo.currentText()
-    self.attendance[date_str] = status
-    self.save_data()
-    self.status_label.setText(f"Status am {date_str}: {status}")
-    self.highlight_day(qdate, status)
-    self.update_stats_label()
+        date_str = qdate.toString("yyyy-MM-dd")
+        status = self.combo.currentText()
+        self.attendance[date_str] = status
+        self.save_data()
+        self.status_label.setText(f"Status am {date_str}: {status}")
+        self.highlight_day(qdate, status)
+        self.update_stats_label()
 
     def highlight_day(self, qdate: QDate, status: str):
         fmt = QTextCharFormat()
@@ -99,47 +99,47 @@ class AttendanceCalendar(QWidget):
             if qdate.isValid():
                 self.highlight_day(qdate, status)
 
-   def update_stats_label(self):
-    """Berechnet die Monatsstatistik und aktualisiert die Anzeige."""
-    now = datetime.now()
-    year, month = now.year, now.month
+    def update_stats_label(self):
+        """Berechnet die Monatsstatistik und aktualisiert die Anzeige."""
+        now = datetime.now()
+        year, month = now.year, now.month
 
-    # ---------------------------
-    # Ungültige Einträge überspringen
-    # ---------------------------
-    monthly_entries = {}
-    for date_str, status in self.attendance.items():
-        try:
-            dt = datetime.strptime(date_str, "%Y-%m-%d")
-        except ValueError:
-            print(f"⚠️ Ungültiges Datum übersprungen: {date_str} → {status}")
-            continue
-        if dt.year == year and dt.month == month:
-            monthly_entries[date_str] = status
+        # ---------------------------
+        # Ungültige Einträge überspringen
+        # ---------------------------
+        monthly_entries = {}
+        for date_str, status in self.attendance.items():
+            try:
+                dt = datetime.strptime(date_str, "%Y-%m-%d")
+            except ValueError:
+                print(f"⚠️ Ungültiges Datum übersprungen: {date_str} → {status}")
+                continue
+            if dt.year == year and dt.month == month:
+                monthly_entries[date_str] = status
 
-    # ---------------------------
-    # JSON automatisch bereinigen (optional)
-    # ---------------------------
-    if len(monthly_entries) != len(self.attendance):
-        self.attendance = monthly_entries
-        self.save_data()
-        print("🔧 Ungültige Einträge aus der JSON entfernt.")
+        # ---------------------------
+        # JSON automatisch bereinigen (optional)
+        # ---------------------------
+        if len(monthly_entries) != len(self.attendance):
+            self.attendance = monthly_entries
+            self.save_data()
+            print("🔧 Ungültige Einträge aus der JSON entfernt.")
 
-    # ---------------------------
-    # Anzeige aktualisieren
-    # ---------------------------
-    if not monthly_entries:
-        self.stats_label.setText("Keine Einträge für diesen Monat.")
-        return
+        # ---------------------------
+        # Anzeige aktualisieren
+        # ---------------------------
+        if not monthly_entries:
+            self.stats_label.setText("Keine Einträge für diesen Monat.")
+            return
 
-    counts = Counter(monthly_entries.values())
-    total_days = sum(counts.values())
+        counts = Counter(monthly_entries.values())
+        total_days = sum(counts.values())
 
-    stats_text = " / ".join(
-        f"{status}: {round((counts.get(status, 0) / total_days) * 100)}%"
-        for status in self.STATUS_OPTIONS
-        if counts.get(status)
-    )
+        stats_text = " / ".join(
+            f"{status}: {round((counts.get(status, 0) / total_days) * 100)}%"
+            for status in self.STATUS_OPTIONS
+            if counts.get(status)
+        )
 
-    self.stats_label.setText(f"Anwesenheitsquote ({month:02d}/{year}): {stats_text}")
+        self.stats_label.setText(f"Anwesenheitsquote ({month:02d}/{year}): {stats_text}")
 
