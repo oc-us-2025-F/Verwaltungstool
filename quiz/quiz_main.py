@@ -9,9 +9,9 @@ from PySide6.QtCore import Qt
 
 DB_PATH = "quiz_app.sqlite"
 SCORES_PATH = os.path.join(os.path.dirname(__file__), "quiz_scores.json")
-
-# Hilfsfunktionen für Score-Handling
-
+#
+# Hilfsfunktionen für Score
+#
 def lade_scores():
     if not os.path.exists(SCORES_PATH):
         return {}
@@ -21,8 +21,9 @@ def lade_scores():
 def speichere_scores(scores):
     with open(SCORES_PATH, "w", encoding="utf-8") as f:
         json.dump(scores, f, indent=2)
-
+#
 # Hilfsfunktion: Hole Frage mit höchstem Fehler-Count
+#
 import sqlite3
 def frage_mit_hoechstem_count():
     scores = lade_scores()
@@ -40,8 +41,9 @@ def frage_mit_hoechstem_count():
             max_count = count
             beste_frage = (frage_id, frage_text)
     return beste_frage
-
-# Hauptmenü
+#
+# hhauptmenü
+#
 class QuizMainWindow(QWidget):
     def __init__(self):
         super().__init__()
@@ -66,7 +68,7 @@ class QuizMainWindow(QWidget):
         dialog = FrageHinzufuegenDialog(self)
         dialog.exec()
 
-# Popup zum Beantworten einer Frage
+# Popup zum Beantworten
 class FrageBeantwortenDialog(QDialog):
     def __init__(self, frage_id, frage_text, parent=None):
         super().__init__(parent)
@@ -90,7 +92,9 @@ class FrageBeantwortenDialog(QDialog):
             self.antwort_checkboxes.append(cb)
             if ist_richtig:
                 self.richtig_ids.add(antwort_id)
-        # Buttons
+        # Butons
+        #
+        #
         btn_layout = QHBoxLayout()
         self.btn_beenden = QPushButton("Beenden")
         self.btn_bearbeiten = QPushButton("Frage bearbeiten")
@@ -137,7 +141,8 @@ class FrageBeantwortenDialog(QDialog):
     def frage_bearbeiten(self):
         dialog = FrageBearbeitenDialog(self.frage_id, self)
         dialog.exec()
-
+#
+#
 # Dialog zum Bearbeiten einer Frage
 class FrageBearbeitenDialog(QDialog):
     def __init__(self, frage_id, parent=None):
@@ -186,8 +191,9 @@ class FrageBearbeitenDialog(QDialog):
         conn.close()
         QMessageBox.information(self, "Erfolg", "Frage aktualisiert.")
         self.accept()
-
-# Dialog zum Hinzufügen einer neuen Frage
+#
+#
+# idialog zum Hinzufügen einer neuen Frage
 class FrageHinzufuegenDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -227,7 +233,7 @@ class FrageHinzufuegenDialog(QDialog):
             return
         conn = sqlite3.connect(DB_PATH)
         c = conn.cursor()
-        # Neue ID generieren
+        # Neue ID
         c.execute("SELECT MAX(id) FROM frage")
         max_id = c.fetchone()[0]
         neue_id = int(max_id)+1 if max_id else 1
