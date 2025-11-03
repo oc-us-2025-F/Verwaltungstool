@@ -1,3 +1,6 @@
+#---------------------------------------------------------------------------------------------------------------------------------------------
+#importe <----------------------------<------------------------------<------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------------------------------------------
 import sys
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (QApplication, QDialog, QPushButton, QVBoxLayout, 
@@ -8,11 +11,17 @@ try:
     from under_funktions import init_db, update_counter, get_counter_display_text 
 except ImportError:
     print("Warnung: Externe Imports (git_funktions, under_funktions) fehlgeschlagen.")
+
+#---------------------------------------------------------------------------------------------------------------------------------------------
+# funktionen <----------------------------<------------------------------<--------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------------------------------------------
+
     def git_pull_db():print("Git Pull")
     def git_push_db(): print("Git Push")
     def init_db(): print("DB init")
     def update_counter(art): print(f"Zähle {art}")
     def get_counter_display_text(): 
+        """ text für die anzeige des counters holen """
         # Simuliert das Zähler-Display im Fehlerfall
         return "Zählerstände konnten nicht geladen werden (Platzhalter)\nTechnisch: 0 | Allgemein: 0 | Gesamt: 0"
 class CounterDialog(QDialog):
@@ -27,7 +36,9 @@ class CounterDialog(QDialog):
         self.setWindowFlag(Qt.WindowStaysOnTopHint)        
         self.init_ui() 
         self.init_data()
-
+#--------------------------------------------------------
+#----> Gui Elemente <------------------------------------
+#--------------------------------------------------------
     def init_ui(self):
         main_layout = QVBoxLayout()
         
