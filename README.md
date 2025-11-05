@@ -99,3 +99,90 @@ Diese Werkzeuge unterstützen eine schnelle und zuverlässige Kontrolle der Anwe
 Mit diesem Tool schaffen wir eine zentrale, datenschutzkonforme und benutzerfreundliche Lösung für alle relevanten Verwaltungs- und Lernprozesse während unserer Umschulung. Die modulare Struktur ermöglicht eine einfache Erweiterung und Anpassung an zukünftige Anforderungen.
 
 ---
+
+## Für Mitarbeitende: Lokal testen und Merge-Checks (Deutsch)
+
+Dieser Abschnitt beschreibt kurz und knapp, wie Mitwirkende das Projekt lokal testen und typische Merge-Probleme prüfen und lösen können.
+
+Voraussetzungen
+- macOS oder Linux mit Python 3.10+ installiert (macOS-Anwender: zsh ist Standard)
+- Optional: ein virtuelles Umfeld (venv) zur Isolierung von Abhängigkeiten
+
+Schnellstart (einmalig)
+1. Projekt klonen (falls noch nicht vorhanden):
+
+```bash
+git clone git@github.com:F-Klose/Verwaltungstool.git
+cd Verwaltungstool
+```
+
+2. Optional: virtuelles Umfeld erstellen und aktivieren:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate  # für zsh / bash
+```
+
+3. Benötigte Pakete installieren (mindestens PySide6):
+
+```bash
+pip install --upgrade pip
+pip install PySide6
+# Falls weitere Abhängigkeiten hinzugefügt werden, hier ergänzen
+```
+
+Tests ausführen
+- Alle Tests (aus dem Projekt-Root):
+
+```bash
+python -m unittest discover -v
+```
+
+- Nur die Tests des Attendance-Modules (aus dem Ordner `attendance_calendar`):
+
+```bash
+cd attendance_calendar
+python -m unittest test_attendance_calendar.py -v
+```
+
+- Wenn das Projekt eine lokale virtuelle Umgebung `.venv` nutzt, können Sie stattdessen explizit den Python-Interpreter verwenden:
+
+```bash
+./.venv/bin/python -m unittest discover -v
+```
+
+Hinweise zu GUI-Tests
+- Die Tests im Ordner `attendance_calendar` verwenden PySide6-Widgets. Stellen Sie sicher, dass PySide6 installiert ist und dass der Testlauf eine QApplication-Instanz erstellt (die Tests in diesem Repo setzen die QApplication automatisch in `setUpClass`).
+
+Merge- und Konflikt-Checks (kurz)
+1. Prüfen, ob ein Merge-Konflikt vorliegt:
+
+```bash
+git status --porcelain
+git diff --name-only --diff-filter=U
+```
+
+2. Wenn Dateien ungemerged sind, die Stage-Blobs ansehen (zeigt die Versionen von beiden Seiten):
+
+```bash
+git ls-files -u
+git show :1:path/to/file.py   # Version von stage 1
+git show :2:path/to/file.py   # Version von stage 2
+git show :3:path/to/file.py   # Version von stage 3 (falls vorhanden)
+```
+
+3. Konflikt auflösen (Beispiel-Workflow):
+- Wähle die gewünschte Version, schreibe sie in die Arbeitskopie (z. B. `git show :3:... > file.py`) oder editiere manuell.
+- `git add file.py` um die Datei als gelöst zu markieren.
+- Sobald alle Konflikte gelöst sind: `git commit -m "Merge: Konflikte gelöst: <kurze Beschreibung>"`
+- Danach `git push` zum Remote-Branch.
+
+Best Practices für Tests vor dem Push
+- Immer `python -m unittest discover -v` lokal ausführen bevor Sie Änderungen pushen.
+- Wenn Sie an GUI- oder Zeit-abhängigen Tests arbeiten, stellen Sie sicher, dass die Tests deterministisch sind (keine festen Zeitlimits in Produktionscode verwenden).
+
+Kontakt / Rückfragen
+- Wenn Unsicherheit bei der Konfliktlösung besteht: Eröffnen Sie eine kurze Pull-Request mit dem Merge-Commit und markieren Sie einen Teamkollegen zur Review.
+- Bei Problemen mit PySide6-Importen prüfen Sie zuerst die aktive Python-Umgebung (`which python` / `python -V`) und ob PySide6 in dieser Umgebung installiert ist (`pip list | grep PySide6`).
+
+Diese Anleitung ist bewusst knapp gehalten — bei Bedarf erstelle ich gern eine ausführlichere `CONTRIBUTING.md` mit Checklisten und CI-Hinweisen.
