@@ -1,0 +1,17 @@
+Copyright (c) 2025 [Dein Name oder Firmenname]
+
+Alle Rechte vorbehalten.
+
+Dieses Programm und sein Quellcode dürfen nicht ohne ausdrückliche Genehmigung des Autors kopiert, verändert oder weitergegeben werden.
+
+Das Programm nutzt folgende Open-Source-Komponenten:
+
+- PySide6 (Qt for Python), lizenziert unter der GNU LGPLv3:
+  https://www.gnu.org/licenses/lgpl-3.0.html
+
+- Pillow, lizenziert unter der HPND License:
+  https://pillow.readthedocs.io/en/stable/about.html#license
+
+Dieses Programm verwendet keine Cloud- oder Online-Dienste. Alle Daten verbleiben lokal auf dem System des Nutzers.
+
+Stand: November 2025
