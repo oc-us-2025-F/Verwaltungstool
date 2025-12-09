@@ -12,7 +12,7 @@ from password.password_main import PasswordWindow
 from quiz.quiz_main import QuizMainWindow
 from utils.git_utils import git_pull, git_push, git_merge
 from attendance_calendar.date_attendance_main import AttendanceCalendar
-from intro.intro_main import show_intro_popup
+from intro.intro_main import IntroManager
 
 class NewsFenster(QWidget):
     def __init__(self):
@@ -46,6 +46,11 @@ class NewsFenster(QWidget):
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.show_next)
         self.timer.start(45000)  # 45 Sekunden
+
+    def show_intro_popup(self):
+        from PySide6.QtGui import QPixmap 
+        intro_dialog = IntroManager(total_pages=8, perant=self)
+        intro_dialog.exec()
 
     def show_next(self):
         if len(self.news_list) <= 1:
@@ -160,7 +165,7 @@ class MainWindow(QMainWindow):
         #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         #>>>>> hier pop aufrufen <<<<<
         #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-        show_intro_popup()
+        #show_intro_popup()
         #>>>>>>>>>>>>>>>>>>>>>>>>>>>
         #<<<<<<< intro ende <<<<<<<<
         #>>>>>>>>>>>>>>>>>>>>>>>>>>>

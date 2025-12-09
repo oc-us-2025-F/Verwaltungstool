@@ -1,15 +1,17 @@
 #------------------------------------
 #-------------importe----------------
 #------------------------------------
-from pyside6.QtCore import Qt
-from pyside6.QtWidgets import QDialog, QVBoxLayout, QLabel, QPushButton
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QDialog, QVBoxLayout, QLabel, QPushButton
 import i18n
 #------------------------------------
 #---------------klasse---------------
 #------------------------------------
-class IntroManager:
-    def __init__(self, perant=None):
+class IntroManager(QDialog):
+    def __init__(self,total_pages = 8, perant=None):
         super().__init__(perant)
+        self.total_pages = total_pages
+        self.current_page = 1
         self.setWindowTitle("Einführungsmodus")
         self.setGeometry(100, 100, 300, 150)
         self.setWindowFlag(Qt.WindowStaysOnTopHint)
@@ -19,30 +21,53 @@ class IntroManager:
 #----> Gui Elemente <----------------
 #------------------------------------
     def init_ui(self):
+        #erstellen des widgets
         main_layout = QVBoxLayout()
-        PAGE = 1
-        self.intro_label = QLabel(i18n.t(f"intro.page_{PAGE}_text"))# zu ordnung aufrufen über page text
+        self.intro_label = QLabel()
         self.intro_label.setAlignment(Qt.AlignCenter)
         self.image_label = QLabel()
-        self.image_label.setAlignment(Qt.AlignCenter)
-        self.image_label.setPixmap(i18n.t(f"intro.page_{PAGE}_image"))#zu ordnung aufrufen über page bild
+        #buttons
+        self.next_button = QPushButton()# text wird in ui update gesetzt
+        self.back_button = QPushButton()# text wird in ui update gesetzt
+        #layout zusammenstellen
+        main_layout = QVBoxLayout(self)
         main_layout.addWidget(self.intro_label)
         main_layout.addWidget(self.image_label)
-        self.next_button = QPushButton(i18n.t("intro.next_button_text"))#nächster
-        self.back_button = QPushButton(i18n.t("intro.back_button_text"))#zurück
+        main_layout.addWidget(self.next_button)
+        main_layout.addWidget(self.back_button)
+        #verbindungen 
+        self.next_button.clicked.connect(self.next_page)
+        self.back_button.clicked.connect(self.back_page)
 
-    def load_page(self, page_number):
-        self.intro_label.setText(i18n.t(f"intro.page_{page_number}_text"))
-        self.image_label.setPixmap(i18n.t(f"intro.page_{page_number}_image"))
+    def updade_ui(self):
+        page = self.current_page
+        # inhalte aktualisieren
+        self.intro_label.setText(i18n.t(f"intro.page_{page}.text"))
+        image_path = i18n.t(f"intro.page_{page}.image")
+        pixamap = QPixmap(image_path)
+        if not pixamap.isNull():
+            self.image_label.setPixmap(pixamap)
+        else:
+            self.image_label.setText("Bild nicht gefunden.")
+
+        # button texte aktualisieren
         self.next_button.setText(i18n.t("intro.next_button_text"))
         self.back_button.setText(i18n.t("intro.back_button_text"))
+        #zustände der buttons(aktiv/ inaktiv schalten der buttons)
+        self.back_button.setEnabled(page > 1)
+        self.next_button.setEnabled(page < self.total_pages)
+
+#------------------------------------
+#------> steuerfunktionen <----------
+#------------------------------------
 
     def next_page(self):
-        self.load_page(self.current_page + 1)
-  
+        if self.current_page < self.total_pages:
+            self.current_page += 1
+            self.updade_ui()
 
     def back_page(self):
         if self.current_page > 1:
-            self.load_page(self.current_page - 1)
-        else:
-            pass
+            self.current_page -= 1
+            self.updade_ui()
+
