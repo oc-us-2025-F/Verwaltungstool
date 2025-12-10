@@ -33,6 +33,7 @@ def git_push_db():
         subprocess.run(["git", "-C", db_dir, "add", db_file], check=True)
         subprocess.run(["git", "-C", db_dir, "commit", "-m", "Update DB"], check=True)
         subprocess.run(["git", "-C", db_dir, "push", "origin", "main"], check=True)
+        print("Hallo der Git Push war erfolgreich.")
     except Exception as e:
         print("Git Push Fehler:", e)
 

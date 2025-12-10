@@ -64,22 +64,11 @@ def add_news_item(text, db_path="news/news.db", created_at=None):
     return True
 
 def git_pull_newsdb():
-    """Holt die aktuelle news.db von Git."""
-    try:
-        subprocess.run(["git", "pull"], check=True)
-        print("Git Pull für news.db ausgeführt.")
-    except Exception as e:
-        print(f"Fehler bei git pull: {e}")
+    git_pull_db()
 
 def git_push_newsdb(commit_message="Update news.db"):
     """Pusht die aktuelle news.db zu Git."""
-    try:
-        subprocess.run(["git", "add", "news.db"], check=True)
-        subprocess.run(["git", "commit", "-m", commit_message], check=True)
-        subprocess.run(["git", "push"], check=True)
-        print("Git Push für news.db ausgeführt.")
-    except Exception as e:
-        print(f"Fehler bei git push: {e}")
+    git_push_db()
 
 def git_merge_newsdb():
     """Führt ein git merge aus (z.B. nach Pull)."""
