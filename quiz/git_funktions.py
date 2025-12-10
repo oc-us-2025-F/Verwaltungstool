@@ -1,7 +1,7 @@
 import subprocess
 import os
 
-DB_PATH = "quiz/quiz_app.sqlite"
+DB_PATH = "quiz_app.sqlite"
 
 def git_pull_db():
     """Führt einen Git Pull für die Datenbank durch.
@@ -16,8 +16,8 @@ def git_pull_db():
         subprocess.run(
             ["git", "-C", db_dir, "pull", "origin", "main"],
             check=True
-            print("git pull quiz läuft wie erwartet")
         )
+        print("git pull quiz läuft wie erwartet")
     except Exception as e:
         print("Git Pull im quiz Fehler:", e)
 
@@ -28,7 +28,7 @@ def git_push_db():
     in einem Git-Repository verwaltet wird.
     Vor dem Push wird die Datenbankdatei zum Commit hinzugefügt.
     """
-    print("starte ich ja wen du das lesen kannst schon")
+    print("git push quiz läuft")
     db_abspath = os.path.abspath(DB_PATH)
     db_dir = os.path.dirname(db_abspath)
     db_file = os.path.basename(db_abspath)
@@ -36,9 +36,9 @@ def git_push_db():
         subprocess.run(["git", "-C", db_dir, "add", db_file], check=True)
         subprocess.run(["git", "-C", db_dir, "commit", "-m", "Update DB"], check=True)
         subprocess.run(["git", "-C", db_dir, "push", "origin", "main"], check=True)
-        print("Hallo der Git Push war erfolgreich.")
+        print("Hallo der Git Push quiz war erfolgreich.")
     except Exception as e:
-        print("Git Push Fehler:", e)
+        print("Git Push  quiz Fehler:", e)
 
 
         # fertig
