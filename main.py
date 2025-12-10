@@ -195,7 +195,7 @@ class MainWindow(QMainWindow):
         logo.setFixedSize(15, 15)
         logo.setStyleSheet("background-color: #bbb; border: 1px solid #888;")  # Platzhalter für Logo
         branding_inner.addWidget(logo)
-        branding_text = QLabel("MAKE BY UMSCHULUNGS GRUPPE FROM 03.2025-03.2027")
+        branding_text = QLabel("MADE BY UMSCHULUNGSGRUPPE FIAE 03.2025-03.2027")
         branding_inner.addWidget(branding_text)
         branding_frame.setLayout(branding_inner)
         branding_layout.addWidget(branding_frame)
@@ -221,7 +221,7 @@ class MainWindow(QMainWindow):
     #------------------------------------
     #----->intro seitenanzahl <----------
     #------------------------------------
-    def open_intro(self, total_pages=10):
+    def open_intro(self, total_pages=8):
         intro_dialog = IntroManager(total_pages=total_pages, perant=self)
         intro_dialog.updade_ui()
         intro_dialog.exec()
