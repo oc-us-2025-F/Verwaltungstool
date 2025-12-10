@@ -218,8 +218,10 @@ class MainWindow(QMainWindow):
         self.git_timer = QTimer(self)
         self.git_timer.timeout.connect(self.git_auto_pull)
         self.git_timer.start(60000)  #TODO: wieder auf 60 Sekunden ändern
-    
-    def open_intro(self, total_pages=8):
+    #------------------------------------
+    #----->intro seitenanzahl <----------
+    #------------------------------------
+    def open_intro(self, total_pages=10):
         intro_dialog = IntroManager(total_pages=total_pages, perant=self)
         intro_dialog.updade_ui()
         intro_dialog.exec()
@@ -252,13 +254,18 @@ class MainWindow(QMainWindow):
     def beenden(self):
         git_push()
         QApplication.quit()
-
+#---------------------------------------
+#--------programm start ----------------
+#--------Intro seitenanzahl 10 ---------
+#---------------------------------------
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = MainWindow()
     window.show()
-    QTimer.singleShot(2000, lambda: window.open_intro(total_pages=8))
+    QTimer.singleShot(2000, lambda: window.open_intro(total_pages=10))# Einführungsmodus mit 10 Seiten starten
     sys.exit(app.exec())
 
 
     #TODO: funktionen auslagern in eigene dateien
+    #TODO: intro seitenanzahl leichter anpassbar machen
+    #TODO: git funktionen verbessern (fehlerbehandlung etc.)

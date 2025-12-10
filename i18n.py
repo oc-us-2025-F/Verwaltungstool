@@ -2,24 +2,24 @@ import os
 from typing import Optional
 # QPixmap wird HIER NICHT MEHR BENÖTIGT und wurde entfernt.
 
-DEFAULT_LOCALE = "de"
+DEFAULT_LOCALE = "de" # verwendete sprache möglich: "de" / "en"
 
 # Simple in-file translations. 
 _translations = {
     "de": {
         # ✅ Speichert jetzt NUR DEN PFAD-STRING.
-        "intro.page_1_image": os.path.join("intro", "images", "img/intro_image_1.png"),
-        "intro.page_1_text": "Willkommen zum Verwaltungstool!\n\nDieses Tool hilft Ihnen, verschiedene Verwaltungsaufgaben effizient zu erledigen.",
-        "intro.page_2_image": os.path.join("intro", "images", "img/intro_image_2.png"),
-        "intro.page_2_text": "Navigieren Sie durch die verschiedenen Module, um Funktionen wie Anwesenheitsverwaltung, Störungszähler und mehr zu nutzen.",
+        "intro.page_1.image": os.path.join("intro", "images", "img/intro_image_1.png"),
+        "intro.page_1.text": "Willkommen zum Verwaltungstool!\n\nDieses Tool hilft Ihnen, verschiedene Verwaltungsaufgaben effizient zu erledigen.",
+        "intro.page_2.image": os.path.join("intro", "images", "img/intro_image_2.png"),
+        "intro.page_2.text": "Navigieren Sie durch die verschiedenen Module, um Funktionen wie Anwesenheitsverwaltung, Störungszähler und mehr zu nutzen.",
         "intro.next_button_text": "Weiter",
         "intro.back_button_text": "Zurück", 
     },
     "en": {
-        "intro.page_1_image": os.path.join("intro", "images", "intro_image_1.png"),
-        "intro.page_1_text": "Welcome to the Management Tool!\n\nThis tool helps you efficiently handle various management tasks.",
-        "intro.page_2_image": os.path.join("intro", "images", "intro_image_2.png"),
-        "intro.page_2_text": "Navigate through the different modules to utilize features like attendance management, fault counter, and more.",
+        "intro.page_1.image": os.path.join("intro", "images", "intro_image_1.png"),
+        "intro.page_1.text": "Welcome to the Management Tool!\n\nThis tool helps you efficiently handle various management tasks.",
+        "intro.page_2.image": os.path.join("intro", "images", "intro_image_2.png"),
+        "intro.page_2.text": "Navigate through the different modules to utilize features like attendance management, fault counter, and more.",
         "intro.next_button_text": "Next",
         "intro.back_button_text": "Back",
     },

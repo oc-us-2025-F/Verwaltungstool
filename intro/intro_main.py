@@ -9,7 +9,7 @@ import i18n
 #---------------klasse---------------
 #------------------------------------
 class IntroManager(QDialog):
-    def __init__(self,total_pages = 8, perant=None):
+    def __init__(self,total_pages = 10, perant=None):# auch hier seitenanzahl festlegen 
         super().__init__(perant)
         self.total_pages = total_pages
         self.current_page = 1

@@ -5,7 +5,7 @@
 import sqlite3
 from datetime import datetime, timedelta
 import subprocess
-
+from news.git_funktions import git_pull_db, git_push_db
 
 #----------------------------------------------
 # -------> funktionen der NEWS mit DB <--------
@@ -60,6 +60,7 @@ def add_news_item(text, db_path="news/news.db", created_at=None):
     cursor.execute ("INSERT INTO news (text, created_at) VALUES (?, ?)", (text.strip(), created_at))
     conn.commit()
     conn.close()
+    git_push_db()
     return True
 
 def git_pull_newsdb():
