@@ -35,109 +35,110 @@ style: |
 ---
 
 ### Istallation des Verwaltungs tools 
-
-## voraus setzungen:
-1. Mit Dozenten eingerichter Github Accunt 
-2. ssh schlüssel im acc hinterlegt 
-3. du kennst das terminal (wenn nicht wende dich an deinen dozenten oder leher)
-4. du musst verstehen das meine lokalen ornder andersheißen können als deine lokalen ordner 
-5. du versuchst es alleine umzsetzen und wendes dich nur bei fehlern an die Dozenten 
-
-wen das bei dir so weit passt können wir weiter machen 
+## Voraussetzungen:
+1. GitHub-Konto: Ein GitHub-Konto wurde mit dem Dozenten eingerichtet.
+2. SSH-Schlüssel: Ein SSH-Schlüssel wurde in deinem GitHub-Konto hinterlegt.
+3. Terminal-Kenntnisse: Du bist vertraut mit der Nutzung des Terminals/der Kommandozeile.(Falls nicht, wende dich bitte an deinen Dozenten oder Lehrer, um eine Einführung zu erhalten.)
+4. Lokale Ordnerstruktur: du verstehst, dass die Namen meiner lokalen Ordner von deinen abweichen können.
+5. Selbstständigkeit: DU versuchst, die Aufgabe selbstständig umzusetzen und wendest dich nur bei auftretenden Fehlern an den Dozenten.
 
 ---
 
 ### schritt 1 
 rufe die webseite auf "https://github.com/F-Klose/Verwaltungstool/tree/main"
 
-klicke auf die grüne schalt fläcche "code" dann geht ein fenster auf 
-das sollte so aus sehen :
-paltzhalter bild 001 
+Klicke auf die grüne Schalt fläche "Code", dann geht ein Fenster auf.
+Dies sollte so aussehen:
+![](./install_img/001.png)
 
 --- 
 
 ### im popup 
 
-hier sihst du ein pop up fesner dieses beinhaltet drei Tabs klicke auf SSH
+Hier siehst du ein Pop-up-Fenster, dieses beinhaltet drei Tabs. Klicke auf SSH.
 1. HTTPS
 2. SSH <- hier 
 3. GITHUB CLI 
-platzhalter bild 2 
+![](./install_img/002.png)
+
 
 --- 
 
 ### im SSH tab 
 
 kopiere den link aus dem fenster 
-platzhaltter bild 003 
-makiere alles und drücke COMMAND + C oder nutze den button um die zeile in den zwischenspeicher aufzunehmen 
+![](./install_img/003.png)
+
+Markiere alles und drücke COMMAND + C oder nutze den Button, um die Zeile in den Zwischenspeicher aufzunehmen.
 
 ---
  
  ### terminal 
- öffne das terminal 
- nutze den befehl "cd" und in das verzeichnis zu navigieren in dem du das repro anlegen willst 
- das sollte in etwa so aus sehen :
- platzhalter bild 004 
+1. Öffne das Terminal.
+
+2. Nutze den Befehl cd (Change Directory), um in das Verzeichnis zu navigieren, in dem du das Repo (Repository) anlegen willst.
+![](./install_img/004.png)
 
  ---
 
- ### im ordner angekommen 
+ ### im Ordner angekommen 
 
- jetzt wo du an der stelle bist wo du das repro an legen willst
- musst du den befehl " git clone" mit der zeile aus deinem zwischenspeicher kombinieren 
- das sollte dann so aus sehen :
- platzhalter bild 005 
-wen das bei dir ao aus siht wie bei mir drücke enter 
+Jetzt, wo du an der Stelle bist, wo du das Repo anlegen willst, musst du den Befehl "git clone" mit der Zeile aus deinem Zwischenspeicher kombinieren.
+
+Das sollte dann so aussehen:
+![](./install_img/005.png)
+wen das bei dir ao aus sieht drücke enter 
 
  --- 
 
 ### der Download 
 
-jetzt wird eine menge in deinem terminal passieren lasse es in ruhe arbeiten wen es fertig ist machen wir weiter 
-wen es in etwa so aus sieht ist der download abgeschlossen 
+Jetzt wird eine Menge in deinem Terminal passieren. Lasse es in Ruhe arbeiten. Wenn es fertig ist, machen wir weiter.
 
-bild 006 
+Wenn es in etwa so aussieht, ist der Download abgeschlossen:
+![](./install_img/008.png)
 
 ---
 
 ### öffne VS code 
-
-öffne das jetzt instalierte repro 
-
-klicke auf öffne neues terminal :
-bild 007 
+1. Öffne das jetzt installierte Repo in VS Code.
+2. Klicke auf "Öffne neues Terminal" in der oberen rechten ecke .
+![](./install_img/007.png)
 
 ---
 
 ### entwicklungs umgebung anlegen 
 
 
-hier gibst du nun folgende befehle ein :
+Hier gibst du nun folgende Befehle der Reihe nach ein:
 ```bash
 python3 -m venv verwaltungstool
 source verwaltungstool/bin/activate
 pip install -r requirements.txt
 ```
 wen das jetzt so aus sieht dann hast du alles richti gemacht :
-bild 008 
+![](./install_img/010.png)
 
 ---
 
 ### was ist da gerade passiert 
 
-1. du hast eine entwicklung umgebung geschaffen 
-2. du hast gesagt das du inner halb dieser umgebung arbeiten willst und diese aktiviert 
-3. du hastt alle benötigten zusatz pakete die für das repro gebaucht werden istalliert 
+1. Du hast eine Entwicklungsumgebung geschaffen.
+
+2. Du hast bestätigt, dass du innerhalb dieser Umgebung arbeiten willst, und diese aktiviert.
+
+3. Du hast alle benötigten Zusatzpakete, die für das Repo gebraucht werden, installiert.
 
 ---
 
 ### was jetzt 
 
-wir sind ferig du bist start bereit 
-im hauptverzeichniss kann du die die main.py ausführen klichke due an und drücken dann oben auf start 
-bild 009
-schaue dir die read.me an wen du weitere fragen haben solltest 
-viel spass 
+Wir sind fertig – du bist startbereit!
+
+Im Hauptverzeichnis kannst du die main.py ausführen. Klicke die Datei an und drücke dann oben auf Start.
+![](./install_img/009.png)
+Schau dir die README an, wenn du weitere Fragen haben solltest.
+
+Viel Spaß!
 
 
