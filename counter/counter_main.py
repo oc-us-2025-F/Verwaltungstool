@@ -56,7 +56,7 @@ class CounterDialog(QDialog):
         
         # Buttons sind immer sichtbar
         counter_button_layout = QHBoxLayout()
-        self.tech_button = QPushButton("Technischee Störung zählen")
+        self.tech_button = QPushButton("Technische Störung zählen")
         self.tech_button.clicked.connect(lambda: self.count_störung("technisch"))
         counter_button_layout.addWidget(self.tech_button)
         

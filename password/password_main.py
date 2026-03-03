@@ -37,10 +37,6 @@ def generate_random_password(length=8):
     print(final_password)
     return final_password
 
-generate_random_password(8)
-
-
-
 class PasswordWindow(QWidget):
     """
     Gui für den Passwort Generator
