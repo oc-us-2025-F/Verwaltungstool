@@ -23,8 +23,6 @@ Dieses Verwaltungstool wurde entwickelt, um sämtliche organisatorische Aufgaben
 - **Störungscounter:** Sammlung und Auswertung technischer und allgemeiner Störungen (wird von allen Anwendern geteilt, keine personenbezogenen Daten).
 - **News:** Kurzmitteilungen, die für 2 Wochen sichtbar bleiben und automatisiert über GitHub verteilt werden.
 - **Merksätze:** Rotierende Anzeige von Merksätzen, die alle 120 Sekunden wechseln.
-- **Zahlensysteme:** Ermoeglicht ueben der umrechnungen zwischen den einzelnen zahlen systemen (Binaer/Hexadezimal/Dezimal)
-
 - **Passwort generrator**
 erstellt passwörter mit random zeichen auf angebene länge 
 ---
@@ -41,6 +39,11 @@ erstellt passwörter mit random zeichen auf angebene länge
 ## GitHub & Versionsverwaltung
 
 - **Datenverteilung:** News, Merksätze und Quizfragen werden über GitHub bereitgestellt, ohne Speicherung von Benutzerdaten.
+- **Branch-Strategie:** Nach jeder Änderung wird ein neuer Branch erstellt. Die Versionsnummern werden wie folgt erhöht:
+  - Start: 0.00 (nur README)
+  - Neue Funktion: +0.01
+  - Fertiges Modul: +0.10
+  - Projektabschluss: 1.0
 
 ---
 
