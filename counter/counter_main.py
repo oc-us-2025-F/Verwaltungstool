@@ -7,23 +7,20 @@ from PySide6.QtWidgets import (QApplication, QDialog, QPushButton, QVBoxLayout,
                                QHBoxLayout, QLabel)
 
 try:
-    from git_funktions import git_pull_db, git_push_db
-    from under_funktions import init_db, update_counter, get_counter_display_text 
+    from counter.git_funktions import git_pull_db, git_push_db
+    from counter.under_funktions import update_counter, get_counter_display_text
 except ImportError:
-    print("Warnung: Externe Imports (git_funktions, under_funktions) fehlgeschlagen.")
+    try:
+        from git_funktions import git_pull_db, git_push_db
+        from under_funktions import update_counter, get_counter_display_text
+    except ImportError:
+        print("Warnung: Externe Imports (git_funktions, under_funktions) fehlgeschlagen.")
 
-#---------------------------------------------------------------------------------------------------------------------------------------------
-# funktionen <----------------------------<------------------------------<--------------------------------------------------------------------
-#---------------------------------------------------------------------------------------------------------------------------------------------
-
-    def git_pull_db():print("Git Pull")
-    def git_push_db(): print("Git Push")
-    def init_db(): print("DB init")
-    def update_counter(art): print(f"Zähle {art}")
-    def get_counter_display_text(): 
-        """ text für die anzeige des counters holen """
-        # Simuliert das Zähler-Display im Fehlerfall
-        return "Zählerstände konnten nicht geladen werden (Platzhalter)\nTechnisch: 0 | Allgemein: 0 | Gesamt: 0"
+        def git_pull_db(): print("Git Pull")
+        def git_push_db(): print("Git Push")
+        def update_counter(art): print(f"Zähle {art}")
+        def get_counter_display_text():
+            return "Zählerstände konnten nicht geladen werden (Platzhalter)\nTechnisch: 0 | Allgemein: 0 | Gesamt: 0"
 class CounterDialog(QDialog):
     """
     Hauptfenster für den Störungszähler im einem Modus.
