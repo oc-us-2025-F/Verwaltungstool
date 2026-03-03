@@ -1,7 +1,7 @@
 #---------------------------------------------------------------------------------------------------------------------------------------------
 #importe <----------------------------<------------------------------<------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------------------------------
-import sys
+import sys  # noqa: F401 – wird in __main__ benötigt
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (QApplication, QDialog, QPushButton, QVBoxLayout, 
                                QHBoxLayout, QLabel)
@@ -81,48 +81,27 @@ class CounterDialog(QDialog):
 
     def count_störung(self, art):
         """Erhöht den Zähler, aktualisiert die Anzeige und pusht sofort."""
-        print(f"Aktion: Zähle {art}...")
-        
-        update_counter(art) # Zähler in der lokalen DB erhöhen
-        self.update_display() # Anzeige aktualisieren
-        git_push_db() # Sofortiges Pushen
-        print(f"Zähler für {art} erhöht und DB zu Git GEPUSHT.")
+        update_counter(art)
+        self.update_display()
+        git_push_db()
 
     def update_display(self):
         """Aktualisiert die Labels mit dem formatierten Text aus der Helferfunktion."""
         try:
-            display_text = get_counter_display_text() 
+            display_text = get_counter_display_text()
             self.total_label.setText(display_text)
-        except Exception as e:
+        except Exception:
             self.total_label.setText("Fehler beim Laden der Zählerstände.")
-            print(f"FEHLER beim Update des Displays: {e}") 
 
     def reject(self):
-        """
-        Wird bei Schließen über X/ESC aufgerufen. 
-        Muss den abschließenden Push durchführen, wie im Original 'beenden'.
-        """
-        print("Dialog abgebrochen (X/ESC) - Führe abschließenden Push durch.")
+        """Wird bei Schließen über X/ESC aufgerufen."""
         git_push_db()
         super().reject()
 
     def accept(self):
-        """Wird bei Klick auf 'Schließen & Speichern' aufgerufen (mit abschließendem Push)."""
-        print("Dialog mit 'Schließen' beendet - Führe abschließenden Push durch.")
+        """Wird bei Klick auf 'Schließen & Speichern' aufgerufen."""
         git_push_db()
         super().accept()
-
-# --- START DER ANWENDUNG ---
-
-def start_application():
-    """Startet die PySide6-Anwendung im Admin-Modus."""
-    #app = QApplication(sys.argv)
-    
-    # Erstellt den Admin-Dialog
-    dialog = CounterDialog()
-    
-    # Blockiert die Ausführung, bis das Fenster geschlossen wird
-    return dialog    
 
 
 if __name__ == "__main__":
