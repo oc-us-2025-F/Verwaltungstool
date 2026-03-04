@@ -62,9 +62,9 @@ def generate_random_task_list(num_tasks: int = None) -> Tuple[Dict, Dict, str]:
     for i, task_name in enumerate(task_names[1:], start=1):
         # Vorgänger: zufällig aus den bereits definiertten Tasks
         available_preds = task_names[:i]  # Alle Tasks vor diesem
-        
-        # Je näher am Ende, desto mehr Vorgägnger (damit möglichst ein zusammenhängender
-        # Plan entsteht), aber nicht alle. Der lettzte Vorgang sollte nicht zwingend
+        # BEACHTEN:
+        # damit möglichst ein zusammenhängender Plan entsteht
+        # Der lettzte Vorgang sollte nicht zwingend
         # von jedem anderen abhängen, sonst entsteht eine kastenartige oderr "Stern"-Struktur.
         if i == len(task_names) - 1:  # Letzter Task
             # Zufällig 1-3 Vorgänger aus den vorherigen auswählen, maximal 3 um Übersicht zu behalten
@@ -77,7 +77,7 @@ def generate_random_task_list(num_tasks: int = None) -> Tuple[Dict, Dict, str]:
             num_preds = random.randint(1, max_preds) if max_preds > 0 else 0
             selected_preds = random.sample(available_preds, num_preds) if num_preds > 0 else []
         
-        preds[task_name] = sorted(selected_preds)  # Sortiert 
+        preds[task_name] = sorted(selected_preds)  # Sortiert sonst ändert sich die rihenfolgle bei jedem lauf, was die Tests erschwert
         
         tasks[task_name] = {
             "beschreibung": random.choice(descriptions),
@@ -87,7 +87,7 @@ def generate_random_task_list(num_tasks: int = None) -> Tuple[Dict, Dict, str]:
             # Verwende ganze Zahlen für die Dauer (1-50), um die Übersicht zu verbessern
             "dauer": random.randint(1, 50)
         }
-    
+     
     # CSV generieren für die Aufgabenlist dammit sie in der GUI angezeigt werden 
     csv_lines = ["Vorgang;Beschreibung;Dauer;Vorgänger"]
     
@@ -120,7 +120,7 @@ def generate_random_task_list(num_tasks: int = None) -> Tuple[Dict, Dict, str]:
         # danach haben wir nur noch primary ohne Nachfolger und dammit einen eindueutigen Endknoten
     elif len(ends) == 0 and task_names:
         # falls zufälilig kein Endknoten existiert (immer mindestens einer),
-        # nehmen wir den letzten Task als Endknoten
+        # ist letzten Task als Endknoten
         last = task_names[-1]
         preds.setdefault(last, [])
 

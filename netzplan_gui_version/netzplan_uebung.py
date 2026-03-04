@@ -17,7 +17,7 @@ from netzplan_generator import generate_random_task_list, save_csv
 #gui
 #-------------------------------
 class NetzplanUebungWindow(QMainWindow):
-    def __init__(self):
+    def __init__(self, auto_generate: bool = True):
         super().__init__()
         self.setWindowTitle("Netzplan Übung")
         self.setGeometry(100, 100, 1400, 900)
@@ -29,7 +29,10 @@ class NetzplanUebungWindow(QMainWindow):
         self.current_project_duration = None
         
         self.init_ui()
-        self.generate_new_exercise()
+        # Beim Erstellen eines Fensters für Tests oder spezielle Zwecke
+        # kann das automatische Erzeugen einer Aufgabe unterdrückt werden.
+        if auto_generate:
+            self.generate_new_exercise()
     
     def init_ui(self):
         """Initialisiert die Benutzeroberfläche."""
@@ -111,7 +114,7 @@ class NetzplanUebungWindow(QMainWindow):
         try:
             df = load_csv(self.current_csv_path)[0]  # load_csv gibt (tasks, preds) zurück, wir brauchen nur die Datei
             
-            # Neu laden mit Pandas für Tabelle
+            # Neulladen mit Pandas für Table
             import pandas as pd
             df = pd.read_csv(self.current_csv_path, sep=";", dtype=str).fillna("")
             
@@ -134,7 +137,7 @@ class NetzplanUebungWindow(QMainWindow):
             error_label = QLabel(f"Fehler beim Laden der CSV: {e}")
             self.content_layout.addWidget(error_label)
         
-        # Stretch am Ende
+        # Streetch am Ende fuer bessere Optik
         self.content_layout.addStretch()
     
     def show_solution(self):
@@ -147,10 +150,10 @@ class NetzplanUebungWindow(QMainWindow):
                 self.current_tasks, self.current_preds
             )
             
-            # DOT generieren
+            # DOT generierenn
             dot_content = build_dot(self.current_tasks, self.current_preds, self.current_metrics, self.current_project_duration)
             
-            # Temporary DOT-Datei
+            # Temporary DOT-Datei 
             dot_path = os.path.join(tempfile.gettempdir(), "netzplan_solution.dot")
             png_path = os.path.join(tempfile.gettempdir(), "netzplan_solution.png")
             
@@ -165,8 +168,18 @@ class NetzplanUebungWindow(QMainWindow):
                 error_label = QLabel(f"Fehler beim Rendern der Grafik: {e}")
                 error_label.setStyleSheet("color: red;")
                 self.content_layout.addWidget(error_label)
-                # Simmullation der Netzplan-Grafik mit QGraphicsView als Fallback
-                self.draw_network_graph()
+                # Simulation der Netzplan-Grafik mit QGraphicsView als Fallback
+                # (einfacher Platzhalter, damit die Methode immer existiert)
+                try:
+                    self.draw_network_graph()
+                except AttributeError:
+                    # ältere Versionen hatten die Methode nicht definiert;
+                    # ein simpler Hinweis hilft dem Benutzer weiter.
+                    fallback_label = QLabel(
+                        "(Grafik nicht verfügbar; Graphviz fehlt oder konnte nicht ausgeführt werden.)"
+                    )
+                    fallback_label.setStyleSheet("color: gray; font-style: italic;")
+                    self.content_layout.addWidget(fallback_label)
                 # Ergebnis-Tabelle anzeigen
                 self.show_results_table()
                 # Buton-Status beibehalten wie bei fertiger Lösung
@@ -267,6 +280,19 @@ class NetzplanUebungWindow(QMainWindow):
     def cancel_exercise(self):
         """Bricht die aktuelle Übung ab."""
         self.generate_new_exercise()
+
+    # ------------------------------------------------------------------
+    # Fallback-Zeichnung
+    # ------------------------------------------------------------------
+    def draw_network_graph(self):
+        """Zeichnet einen einfachen Hinweis, wenn Ggraphviz nicht verfügbar ist.
+        """
+
+        notice = QLabel(
+            "Graphische Darstellung nicht verfügbar (Graphviz nicht installiert)."
+        )
+        notice.setStyleSheet("color: gray; font-style: italic;")
+        self.content_layout.addWidget(notice)
 
 #---------------------------------
 # Hauptfunktion zum Starten der GUI
