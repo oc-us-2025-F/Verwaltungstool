@@ -6,25 +6,52 @@ import subprocess
 #---------------------------------------------------------------------------------------------------------------------------------------------
 # funktionen <----------------------------<------------------------------<--------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------------------------------------------------------
-def get_quotes(db_path="quotes/quotes.db"):
-    """Lädt alle Zitate aus der SQLite-Datenbank und gibt sie als Liste von Strings zurück."""
-    conn = sqlite3.connect(db_path)
-    cursor = conn.cursor()
-    cursor.execute ("SELECT text FROM Zitat")
-    quotes = cursor.fetchall()
-    conn.close()
-    return [row[0] for row in quotes] if quotes else ["Keine Zitate."]
+import requests
+
+superbase_base_url = "https://fburyyzzewkdqxutuayl.supabase.co"
+
+Superbaeurl = "https://fburyyzzewkdqxutuayl.supabase.co/rest/v1/quotes?select=text"
+API_KEY = ""
+
+HEADER = {
+    "apikey": API_KEY,
+    "Authorization": f"Bearer {API_KEY}"   
+}
+
+def get_quotes():
+    api_path = "rest/v1/quotes?select=text"
+    api_url = f"{superbase_base_url}/{api_path}"
+
+    """Lädt alle Zitate aus der von Supabase und gibt sie als Liste von Strings zurück."""
+    response = requests.get(api_url, headers=HEADER)
+    text_list = []
+    for row in response.json():
+        text_list.append(row['text'])
+    return text_list if len(text_list) > 0 else ["Keine Zitate."]
 
 def add_quotes(text, db_path="quotes/quotes.db"):
     """Fügt ein neues Zitat in die SQLite-Datenbank ein."""
-    if not text.strip():
+    text = text.strip()
+    if not text:
         return False
-    conn = sqlite3.connect(db_path)
-    cursor = conn.cursor()
-    cursor.execute ("INSERT INTO Zitat (text) VALUES (?)", (text.strip(),))
-    conn.commit()
-    conn.close()
-    return True
+    
+    url = f"{superbase_base_url}/rest/v1/quotes"
+    inhalt = {
+        "text" : text
+    }
+    
+    response = requests.post(url, headers=HEADER, json= inhalt)
+
+    #conn = sqlite3.connect(db_path)
+    #cursor = conn.cursor()
+    #cursor.execute ("INSERT INTO Zitat (text) VALUES (?)", (text.strip(),))
+    #conn.commit()
+    #conn.close()
+    if not response.ok:
+        print("Status: ", response.status_code)
+        print("Fehler", response.text)
+    return response.ok
+
 
 def git_pull_quotesdb():
     """Holt die aktuelle quotes.db von Git."""
