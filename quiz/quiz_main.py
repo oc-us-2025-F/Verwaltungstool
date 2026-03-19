@@ -52,11 +52,12 @@ def frage_mit_hoechstem_count():
     #TODO: implementieren: Regel um zu verhindern, dass die gleiche Frage direkt nacheinander gestellt wird
     max_count = -9999
     beste_frage = None
-    for frage_id, frage_text in fragen:
-        count = scores.get(str(frage_id), 0)
+    for frage in response.data:
+    # for frage_id, frage_text in response.data:
+        count = scores.get(str(frage['id']), 0)
         if count > max_count:
             max_count = count
-            beste_frage = (frage_id, frage_text)
+            beste_frage = (frage['id'], frage['frage_text'])
     return beste_frage
 ##---------------------------------------------------------------------------------------------------------------------------------------------
 # hhauptmenü
@@ -129,17 +130,18 @@ class FrageBeantwortenDialog(QDialog):
         # Antworten aus DB holen
         supabase = create_client(SUPABASE_BASE_URL, API_KEY)
         response = (
-            supabase.table("antwort")
+            supabase.table("antworten")
             .select("*")
+            .eq('id', frage_id)
             .execute()
      )
-        for antwort_id, antwort_text, ist_richtig in antworten:
-            cb = QCheckBox(antwort_text)
-            cb.setProperty("antwort_id", antwort_id)
+        for antwort in response.data:
+            cb = QCheckBox(antwort['antwort_text'])
+            cb.setProperty("antwort_id", antwort['id'])
             layout.addWidget(cb)
             self.antwort_checkboxes.append(cb)
-            if ist_richtig:
-                self.richtig_ids.add(antwort_id)
+            if antwort['ist_richtig']:
+                self.richtig_ids.add(antwort['id'])
         #------------------
         # Buttons <-------- menü steuerung im fragen beantworten screen
         #------------------
