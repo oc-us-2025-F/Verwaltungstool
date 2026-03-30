@@ -245,7 +245,7 @@ class MainWindow(QMainWindow):
         logo.setFixedSize(15, 15)
         
         # Versuche icon.png zu laden, ansonsten Fallback-Farbe
-        icon_path = os.path.join(os.path.dirname(__file__), "icon.png")
+        icon_path = settings.ICON_DIR / "icon.png"
         if os.path.exists(icon_path):
             pixmap = QPixmap(icon_path)
             # Skaliere auf exakt 15x15 Pixel

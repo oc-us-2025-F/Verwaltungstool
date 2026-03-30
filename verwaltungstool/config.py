@@ -20,6 +20,7 @@ class Settings:
 
         self.CALENDAR_JSON = self.BASE_DIR / "verwaltungstool/data/json/meine_anwesenheit.json"
 
+        self.ICON_DIR = self.BASE_DIR / "verwaltungstool/styles/images"
 
         # Lädt die .env immer aus dem Root-Verzeichnis
         load_dotenv(self.BASE_DIR / ".env")
