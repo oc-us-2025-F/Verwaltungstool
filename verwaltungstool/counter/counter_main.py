@@ -7,8 +7,8 @@ from PySide6.QtWidgets import (QApplication, QDialog, QPushButton, QVBoxLayout,
                                QHBoxLayout, QLabel)
 
 try:
-    from counter.git_funktions import git_pull_db, git_push_db
-    from counter.under_funktions import update_counter, get_counter_display_text 
+    from verwaltungstool.counter.git_functions import git_pull_db, git_push_db
+    from verwaltungstool.counter.data_functions import update_counter, get_counter_display_text 
 except ImportError as e:
     print("Warnung: Externe Imports (git_funktions, under_funktions) fehlgeschlagen."+ e)
 

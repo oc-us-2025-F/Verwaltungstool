@@ -5,8 +5,8 @@ from datetime import datetime
 from PySide6.QtCore import QDate
 from PySide6.QtWidgets import QApplication
 import sys
-import date_attendance_main
-from date_attendance_main import AttendanceCalendar
+import verwaltungstool.attendance_calendar.attendance_calendar_main as attendance_calendar_main
+from verwaltungstool.attendance_calendar.attendance_calendar_main import AttendanceCalendar
 
 class TestAttendanceCalendar(unittest.TestCase):
     @classmethod
@@ -19,8 +19,8 @@ class TestAttendanceCalendar(unittest.TestCase):
         """Set up test environment before each test"""
         self.test_json = "test_attendance.json"
         # Save original json file path
-        self.original_json = date_attendance_main.CLASS_JSON_FILE
-        date_attendance_main.CLASS_JSON_FILE = self.test_json
+        self.original_json = attendance_calendar_main.CLASS_JSON_FILE
+        attendance_calendar_main.CLASS_JSON_FILE = self.test_json
         # Create a test json with a start_date to avoid interactive dialogs
         from datetime import datetime
         with open(self.test_json, "w", encoding="utf-8") as f:
@@ -30,7 +30,7 @@ class TestAttendanceCalendar(unittest.TestCase):
     def tearDown(self):
         """Clean up after each test"""
         # Restore original json file path
-        date_attendance_main.CLASS_JSON_FILE = self.original_json
+        attendance_calendar_main.CLASS_JSON_FILE = self.original_json
         # Remove test json file if it exists
         if os.path.exists(self.test_json):
             os.remove(self.test_json)

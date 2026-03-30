@@ -20,7 +20,7 @@ import sys, os
 #if netzplan_dir not in sys.path:
 #    sys.path.insert(0, netzplan_dir)
 
-from attendance_calendar.date_attendance_main import AttendanceCalendar
+from verwaltungstool.attendance_calendar.attendance_calendar_main import AttendanceCalendar
 from electrical_engineering.gui import ElektroGUI
 from utils.markdown_viewer import MarkdownViewerDialog
 
