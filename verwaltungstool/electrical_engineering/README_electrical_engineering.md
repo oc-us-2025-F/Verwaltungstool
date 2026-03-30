@@ -17,7 +17,7 @@ aufbau:
 
 main.py für logik 
 JSON zur zu ordnung 
-png´s aus png_E.Aufgaben verzeichnis (aufgaben)
+png´s aus Exercises_PNGs verzeichnis (aufgaben)
 
 arbeitsschritte und ausgaben für den betrieb: 
 

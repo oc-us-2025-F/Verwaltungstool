@@ -23,7 +23,7 @@ class ElektroGUI(QWidget):
         # Aufgaben laden
         self.aufgaben = self._lade_aufgaben()
         self.aktuelles = None
-        self.png_ordner = os.path.join(os.path.dirname(__file__), "PNG_e.aufgaben")
+        self.png_ordner = os.path.join(os.path.dirname(__file__), "Exercises_PNGs")
 
         # Layout
         layout = QVBoxLayout()
@@ -50,8 +50,8 @@ class ElektroGUI(QWidget):
         self.setLayout(layout)
     
     def _lade_aufgaben(self):
-        """Lädt die Aufgabendaten aus der nicht_schummeln.json"""
-        json_datei = os.path.join(os.path.dirname(__file__), "nicht_schummeln.json")
+        """Lädt die Aufgabendaten aus der no_cheating.json"""
+        json_datei = os.path.join(os.path.dirname(__file__), "no_cheating.json")
         try:
             with open(json_datei, "r", encoding="utf-8") as f:
                 daten = json.load(f)
