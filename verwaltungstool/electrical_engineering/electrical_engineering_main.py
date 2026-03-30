@@ -20,7 +20,7 @@ def lade_aufgaben():
 aufgaben = lade_aufgaben()
 
 
-def prüfe_antwort(aufgabe_id: int, benutzer_input: str) -> bool:
+def pruefe_antwort(aufgabe_id: int, benutzer_input: str) -> bool:
     """
     Prüft ob der Benutzerinput mit dem korrekten Ergebnis übereinstimmt
     

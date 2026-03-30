@@ -11,7 +11,7 @@ import json
 
 
 # Funktionen aus dem Modul importieren
-from electrical_engineering.electrical_engineering_main import prüfe_antwort
+from electrical_engineering.electrical_engineering_main import pruefe_antwort
 
 
 class ElektroGUI(QWidget):
@@ -87,7 +87,7 @@ class ElektroGUI(QWidget):
             QMessageBox.information(self, "Info", "Bitte zuerst eine Aufgabe auswählen.")
             return
         antwort = self.entry.text().strip()
-        richtig = prüfe_antwort(self.aktuelles['id'], antwort)
+        richtig = pruefe_antwort(self.aktuelles['id'], antwort)
         if richtig:
             QMessageBox.information(self, "Ergebnis", "Richtig!")
         else:
