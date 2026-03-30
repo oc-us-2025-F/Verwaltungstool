@@ -5,21 +5,26 @@
 
 
 xElektrotechnik -> "electrical_engineering"
-Netzplantechnik -> "critical_path_analysis"
+xNetzplantechnik -> "critical_path_analysis"
 Lernkarten -> "flashcards"
-Zahlensysteme -> "number systems"
+xZahlensysteme -> "number systems"
 no_cheating
+
+Pfade alle auf config-Mechanismus umstellen
+
 
 
 # SF
 -Dokus für Funktionen im attendance_calendar
 -verschiedene Main.py ümbenennen zur übersicht
--/Elekrotechnick/read_me:E.technick.md umbennenen
+[x]-/Elekrotechnick/read_me:E.technick.md umbennenen
 -Setup-Datei anlegen die über alle ordner hinweg das setup übernimmt 
--/zahlensysteme/main/main.py übersichtlicher gestalten
+x-/zahlensysteme/main/main.py übersichtlicher gestalten
 -Licensetxt überarbeiten - wegen supabase
 -start.py zur allgemeinen setupdatei integrieren 
+
 -db.dateien mit supabase integrieren
+
 
 -my_project/
 ├── main.py
@@ -32,7 +37,7 @@ no_cheating
 
 # FK
 x-styles/md datei könnte weg
--styles/ hier neuen ordener für assets darein dann icon.png
+x-styles/ hier neuen ordener für assets darein dann icon.png
 x-counter/löschmich.py löschen
 -counter/ git_funktions.py und db nach umstellung entfernen 
 -password/ hat noch keine readme
@@ -44,7 +49,7 @@ x-Script/ altlast
 -Projekt/ readme akttualiseren in PDF 
 -verwaltungstool/ DB´s aufraeumen 
 -Verwaltungstool/unterordner/ readme tittel anpassung 
--bennenungen im gesammten projekt standatisieren 
+x-bennenungen im gesammten projekt standatisieren 
 -im gesammten projekt sind __pycache__ datein 
 -utils/ wird nach umstellung auf supabase unnoetig
 -news/DB nach umstellung DB koennte 
