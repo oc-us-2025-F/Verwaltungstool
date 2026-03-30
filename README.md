@@ -47,10 +47,11 @@ Text & Formatierung: markdown, htmlentities
 **Installation:**
 Repository klonen:
 
-Bash
 
+```bash
 git clone git@github.com:F-Klose/Verwaltungstool.git
-cd Verwaltungstool
+cd Vewaltungstool
+```
 Abhängigkeiten installieren:
 
 ---
