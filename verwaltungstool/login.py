@@ -17,12 +17,12 @@ from verwaltungstool.config import settings
 import os
 from dotenv import load_dotenv
 
+from verwaltungstool.supabase_client import supabase
+
 load_dotenv()
 
 
 def login():
-
-    supabase: Client = create_client(settings.SUPABASE_API_URL, settings.SUPABASE_API_KEY)
 
     try: 
         response = supabase.auth.sign_in_with_password({

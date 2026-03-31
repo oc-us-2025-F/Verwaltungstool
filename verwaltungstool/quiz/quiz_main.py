@@ -14,6 +14,8 @@ from verwaltungstool.config import settings
 
 from verwaltungstool.login import login
 
+from verwaltungstool.supabase_client import supabase
+
 
 #-------------------------------------------------------------------------------------------------
 # pfade 
@@ -65,8 +67,6 @@ def frage_mit_hoechstem_count():
 class QuizMainWindow(QWidget):
     """Hauptmenü für das Quiz-Modul."""
     def __init__(self):
-
-        print(settings.USER)
 
         """
         aufbau des Hauptmenüs 

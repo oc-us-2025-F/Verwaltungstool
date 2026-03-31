@@ -8,6 +8,8 @@ from datetime import datetime, timedelta
 
 from verwaltungstool.config import settings
 
+from verwaltungstool.supabase_client import supabase
+
 
 CLASS_JSON_FILE = settings.CALENDAR_JSON
 
@@ -120,6 +122,17 @@ class AttendanceCalendar(QWidget):
 
     def load_data(self):
         try:
+
+            response = (
+                supabase.table("attendance_calendars")
+                .select("*")
+                .execute()
+            )
+            print(response)
+            for row in response.data:
+                print(row['calendar_data'])
+
+
             with open(CLASS_JSON_FILE, "r", encoding="utf-8") as f:
                 return json.load(f)
         except FileNotFoundError:
