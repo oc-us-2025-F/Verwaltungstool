@@ -41,7 +41,6 @@ def login():
         response = supabase.auth.sign_in_with_password({
             "email": os.getenv("USER_EMAIL"),
             "password": os.getenv("USER_PASSWORD")
-
         })
         user = supabase.auth.get_user()
         settings.USER = user
