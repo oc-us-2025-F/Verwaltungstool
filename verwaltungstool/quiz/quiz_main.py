@@ -28,17 +28,47 @@ SCORES_PATH = settings.QUIZ_JSON
 # code begin 
 ##-------------------------------------------------------------------------------------------------
 
+def create_valid_json():
+
+    conn = sqlite3.connect(DB_PATH)
+    print(DB_PATH)
+    c = conn.cursor()
+    c.execute("SELECT id FROM frage")
+    json_data = {}
+    fragen = c.fetchall()
+
+    conn.close()
+
+    for id in fragen:
+        print("ID: ")
+        print(id[0])
+        json_data[id[0]] = 0
+    return json.dumps(json_data, indent=2)
+
 def lade_scores():
-    """Lade Scores aus JSON-Datei."""
-    if not os.path.exists(SCORES_PATH):
-        return {}
-    with open(SCORES_PATH, "r", encoding="utf-8") as f:
-        return json.load(f)
+ 
+
+    # "quiz_scores"
+    response = (supabase.table("quiz_scores").select('*',count= 'exact').execute())
+    if response.count == 0 or response.data[0]['quiz_score_data'] is None:
+        valid_starting_json = create_valid_json()
+        response = (supabase.table('quiz_scores')
+                    .upsert({'user_id': supabase.auth.get_user().user.id, 'quiz_score_data': valid_starting_json}, on_conflict="user_id")
+                    .execute())
+        return json.loads(valid_starting_json)
+
+    return response.data[0]['quiz_score_data']
+
 
 def speichere_scores(scores):
-    """Speichere Scores in JSON-Datei."""
-    with open(SCORES_PATH, "w", encoding="utf-8") as f:
-        json.dump(scores, f, indent=2)
+    try:
+        response = (supabase.table("quiz_scores")
+                    .upsert({'user_id': supabase.auth.get_user().user.id, 'quiz_score_data': scores}, on_conflict="user_id")
+                    .execute())
+    except Exception as e:
+        print("fehler speichen scores_quiz in supabase", e)
+    
+
 #---------------------------------------------------------------------------------------------------------------------------------------------
 # Hilfsfunktion: Hole Frage mit höchstem Fehler-Count
 #---------------------------------------------------------------------------------------------------------------------------------------------
@@ -46,10 +76,15 @@ import sqlite3 #to connect to the database könnte ich nach oben setzen wollte e
 def frage_mit_hoechstem_count():
     """Finde die Frage mit dem höchsten Fehler-Count."""
     scores = lade_scores()
+    print("SCORES: ")
+    print(scores)
     conn = sqlite3.connect(DB_PATH)
+    print(DB_PATH)
     c = conn.cursor()
     c.execute("SELECT id, frage_text FROM frage")
     fragen = c.fetchall()
+    print("FRAGEN: ")
+    print(fragen)
     conn.close()
     # Finde Frage mit höchstem Fehler-Count
     #TODO: implementieren: Regel um zu verhindern, dass die gleiche Frage direkt nacheinander gestellt wird
@@ -57,9 +92,11 @@ def frage_mit_hoechstem_count():
     beste_frage = None
     for frage_id, frage_text in fragen:
         count = scores.get(str(frage_id), 0)
+        print("frage_id: " + str(frage_id) + " count: " + str(count))
         if count > max_count:
             max_count = count
             beste_frage = (frage_id, frage_text)
+            print("BF: ",  beste_frage)
     return beste_frage
 ##---------------------------------------------------------------------------------------------------------------------------------------------
 # hhauptmenü
