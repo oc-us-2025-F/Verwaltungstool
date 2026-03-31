@@ -44,20 +44,27 @@ Text & Formatierung: markdown, htmlentities
 
 ---
 
-**Installation:**
+## Installation:
 Repository klonen:
 
-Bash
 
+```bash
 git clone git@github.com:F-Klose/Verwaltungstool.git
-cd Verwaltungstool
-Abhängigkeiten installieren:
+cd Vewaltungstool
+``
+### Abhängigkeiten installieren:
 
 ---
 
-Bash
-
+```bash
 pip install -r requirements.txt
+```
+### Modul installieren 
+
+```bash
+pip install -e .
+```
+
 Hinweis: Für die Netzplan-Funktion muss Graphviz zusätzlich auf dem Betriebssystem installiert sein.
 
 ---
