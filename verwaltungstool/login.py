@@ -8,6 +8,19 @@ von Datensätzen ermöglicht, die zur eigenen userID gehören.
 Was man überlegen könnte, ist (zur allgemeinen Vereinfachung) - das JSON-Format beizubehalten und in 
 den Tabelln jeweils eine Spalte für das JSON anzulegen. 
 
+WENN IHR DEN IMPORT 
+
+from verwaltungstool.supabase_client import supabase
+
+UND DANN supabase benutzt, seid ihr dauerhaft authentifiziert, nachdem der Login durch ist. 
+
+Ihr könnt dann wie in attendance_calendar_main.py ab Zeile 126 beispielhaft gezeigt als 
+authentifizierter Nutzer auf die Datenbank zugreifen. 
+
+
+
+
+
 '''
 
 
