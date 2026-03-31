@@ -12,6 +12,8 @@ from PySide6.QtCore import Qt
 
 from verwaltungstool.config import settings
 
+from verwaltungstool.login import login
+
 
 #-------------------------------------------------------------------------------------------------
 # pfade 
@@ -63,6 +65,9 @@ def frage_mit_hoechstem_count():
 class QuizMainWindow(QWidget):
     """Hauptmenü für das Quiz-Modul."""
     def __init__(self):
+
+        print(settings.USER)
+
         """
         aufbau des Hauptmenüs 
 
@@ -352,6 +357,13 @@ class FrageHinzufuegenDialog(QDialog):
         self.accept()
 
 if __name__ == "__main__":
+    try: 
+        login()
+        print ("HALLO AUS MAIN QUIZ")
+    except Exception as e:
+        print("Login nicht möglich!")
+        sys.exit(0)
+
     app = QApplication(sys.argv)
     window = QuizMainWindow()
     window.show()
