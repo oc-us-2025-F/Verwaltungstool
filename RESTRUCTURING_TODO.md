@@ -4,19 +4,18 @@
 
 
 
-xElektrotechnik -> "electrical_engineering"
-xNetzplantechnik -> "critical_path_analysis"
-Lernkarten -> "flashcards"
-xZahlensysteme -> "number systems"
-no_cheating
-
-Pfade alle auf config-Mechanismus umstellen
+[x] Elektrotechnik -> "electrical_engineering"
+[x] Netzplantechnik -> "critical_path_analysis"
+[x] Lernkarten -> "flashcards"
+[x] Zahlensysteme -> "number systems"
+[x] no_cheating
+[x] Pfade alle auf config-Mechanismus umstellen
 
 
 
 # SF
 -Dokus für Funktionen im attendance_calendar
--verschiedene Main.py ümbenennen zur übersicht
+[x] verschiedene Main.py ümbenennen zur übersicht
 [x]-/Elekrotechnick/read_me:E.technick.md umbennenen
 -Setup-Datei anlegen die über alle ordner hinweg das setup übernimmt 
 x-/zahlensysteme/main/main.py übersichtlicher gestalten
@@ -49,8 +48,8 @@ x-Script/ altlast
 -Projekt/ readme akttualiseren in PDF 
 -verwaltungstool/ DB´s aufraeumen 
 -Verwaltungstool/unterordner/ readme tittel anpassung 
-x-bennenungen im gesammten projekt standatisieren 
--im gesammten projekt sind __pycache__ datein 
+[x]-bennenungen im gesammten projekt standatisieren 
+[x] im gesammten projekt sind __pycache__ datein 
 -utils/ wird nach umstellung auf supabase unnoetig
 -news/DB nach umstellung DB koennte 
 x-start.py veraltet 
