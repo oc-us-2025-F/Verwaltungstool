@@ -1,6 +1,7 @@
 from pathlib import Path
 import os
 from dotenv import load_dotenv
+import logging
 
 load_dotenv()
 
@@ -11,6 +12,10 @@ class Settings:
     def __init__(self):
 
         self.USER = None
+
+
+        self.LOG_LEVEL = logging.DEBUG
+
 
         self.BASE_DIR = Path(__file__).resolve().parent.parent
         #Quiz
@@ -41,8 +46,6 @@ class Settings:
         # Einstellungen
         self.SUPABASE_API_URL = "https://fburyyzzewkdqxutuayl.supabase.co"
         self.SUPABASE_API_KEY = os.getenv("SUPABASE_API_KEY")
-
-        print("\n\n" + self.SUPABASE_API_KEY)
 
         # Pfade als Path-Objekte (Windows/Linux kompatibel)
         self.DATA_DIR = self.BASE_DIR / "data"

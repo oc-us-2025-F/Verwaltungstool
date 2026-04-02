@@ -369,16 +369,14 @@ class FrageBearbeitenDialog(QDialog):
             print("frage_id " + str(self.frage_id))
 
             (supabase.table("quiz_fragen")
-            .update({"frage_text": frage_text})
-            .eq("id", self.frage_id)
-            .execute())
+                .update({"frage_text": frage_text})
+                .eq("id", self.frage_id)
+                .execute()
+            )
             
         except Exception as e:
             print("Fehler beim speichern", e)
-        #conn = sqlite3.connect(DB_PATH)
-        #c = conn.cursor()
-        #c.execute("UPDATE frage SET frage_text = ? WHERE id = ?", (frage_text, self.frage_id))
-        
+
         for (antwort_id, inp), chk in zip(self.antwort_inputs, self.richtig_checks):
             antwort_text    = inp.text().strip()
             ist_richtig     = 1 if chk.isChecked() else 0
@@ -394,10 +392,7 @@ class FrageBearbeitenDialog(QDialog):
             except Exception as e:
                 print("FEHER BEIM SPEICHERN")
                 print(e)
-            #c.execute("UPDATE antwort SET antwort_text = ?, ist_richtig = ? WHERE id = ?", (antwort_text, ist_richtig, antwort_id))
-        #conn.commit()
-        #conn.close()
-     
+
         QMessageBox.information(self, "Erfolg", "Frage aktualisiert.")
         self.accept()
 
@@ -462,20 +457,24 @@ class FrageHinzufuegenDialog(QDialog):
         if len(antworten) > 4:
             QMessageBox.warning(self, "Fehler", "Maximal 4 Antworten erlaubt.") #<-----fehler text 3
             return
-        conn = sqlite3.connect(DB_PATH)
-        c = conn.cursor()
-        #-------------------
-        #  ID   <-----------
-        #-------------------
-        c.execute("SELECT MAX(id) FROM frage")
-        max_id = c.fetchone()[0]
-        neue_id = int(max_id)+1 if max_id else 1#höste vergebene id plus 1 = neue id 
-        c.execute("INSERT INTO frage (id, frage_text, quiz_id) VALUES (?, ?, 1)", (neue_id, frage_text))
+
+        
+        response = (
+            supabase.table("quiz_fragen")
+            .insert({'frage_text': frage_text, 'quiz_id' : 1})
+            .execute()
+        )
+
+        neue_id = response.data[0]['id']
+
+        insert_data = []
+
         for idx, antwort_text in enumerate(antworten):
             ist_richtig = 1 if richtig[idx] else 0
-            c.execute("INSERT INTO antwort (antwort_text, frage_id, ist_richtig) VALUES (?, ?, ?)", (antwort_text, neue_id, ist_richtig))
-        conn.commit()
-        conn.close()
+            insert_data.append({"antwort_text" : antwort_text, "frage_id" : neue_id, "ist_richtig" : ist_richtig})
+        
+        supabase.table("quiz_antworten").insert(insert_data).execute()
+
         scores = lade_scores()
         scores[neue_id] = 0
         speichere_scores(scores)
@@ -487,7 +486,6 @@ class FrageHinzufuegenDialog(QDialog):
 if __name__ == "__main__":
     try: 
         login()
-        print ("HALLO AUS MAIN QUIZ")
     except Exception as e:
         print("Login nicht möglich!")
         sys.exit(0)
