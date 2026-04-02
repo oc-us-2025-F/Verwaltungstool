@@ -30,20 +30,26 @@ SCORES_PATH = settings.QUIZ_JSON
 
 def create_valid_json():
 
-    conn = sqlite3.connect(DB_PATH)
-    print(DB_PATH)
-    c = conn.cursor()
-    c.execute("SELECT id FROM frage")
     json_data = {}
-    fragen = c.fetchall()
 
-    conn.close()
+    try: 
+        response = (
+            supabase.table("quiz_fragen")
+            .select("id")
+            .execute()
+        )
+    except Exception as e:
+        print("FEHLER BEI DER DATENBANK-ABFRAGE DER FRAGEN IM QUIZ")
+        print(e)
+        return
 
-    for id in fragen:
+    for row in response.data:
         print("ID: ")
-        print(id[0])
-        json_data[id[0]] = 0
+        print(row['id'])
+        json_data[row['id']] = 0       
+
     return json_data
+
 
 def lade_scores():
  
@@ -76,21 +82,21 @@ import sqlite3 #to connect to the database könnte ich nach oben setzen wollte e
 def frage_mit_hoechstem_count():
     """Finde die Frage mit dem höchsten Fehler-Count."""
     scores = lade_scores()
-    print("SCORES: ")
-    print(scores)
-    conn = sqlite3.connect(DB_PATH)
-    print(DB_PATH)
-    c = conn.cursor()
-    c.execute("SELECT id, frage_text FROM frage")
-    fragen = c.fetchall()
-    print("FRAGEN: ")
-    print(fragen)
-    conn.close()
+
+    try: 
+        response = (supabase.table("quiz_fragen")
+        .select("id, frage_text")
+        .execute())
+    except Exception as e:
+        print(" fehler in daten bank abfrage ")
+
     # Finde Frage mit höchstem Fehler-Count
     #TODO: implementieren: Regel um zu verhindern, dass die gleiche Frage direkt nacheinander gestellt wird
     max_count = -9999
     beste_frage = None
-    for frage_id, frage_text in fragen:
+    for ergebnis_zeile in response.data:
+        frage_id = ergebnis_zeile['id']
+        frage_text = ergebnis_zeile['frage_text']
         count = scores.get(str(frage_id), 0)
         print("frage_id: " + str(frage_id) + " count: " + str(count))
         if count > max_count:
@@ -167,13 +173,24 @@ class FrageBeantwortenDialog(QDialog):
         self.antwort_checkboxes = []
         layout = QVBoxLayout(self)
         layout.addWidget(QLabel(frage_text))
-        # Antworten aus DB holen
-        conn = sqlite3.connect(DB_PATH)
-        c = conn.cursor()
-        c.execute("SELECT id, antwort_text, ist_richtig FROM antwort WHERE frage_id = ?", (frage_id,))
-        antworten = c.fetchall()
-        conn.close()
-        for antwort_id, antwort_text, ist_richtig in antworten:
+
+        try: 
+            response = (
+                supabase.table("quiz_antworten")
+                    .select("id, antwort_text, ist_richtig")
+                    .eq("frage_id", frage_id)
+                    .execute()
+                )
+            
+            antworten = response.data
+            
+        except Exception as e:
+            print("Fehler beim Laden", e)
+            
+        for row in antworten:
+            antwort_id = row['id']
+            antwort_text = row['antwort_text']
+            ist_richtig = row['ist_richtig']
             cb = QCheckBox(antwort_text)
             cb.setProperty("antwort_id", antwort_id)
             layout.addWidget(cb)
@@ -234,11 +251,21 @@ class FrageBeantwortenDialog(QDialog):
         Gibt die richtigen Antworten als Text zurück.
         für den lernefeffekt hat man unbegrenze zeit die richtige antwort zu lesen 
         """
-        conn = sqlite3.connect(DB_PATH)
-        c = conn.cursor()
-        c.execute("SELECT antwort_text FROM antwort WHERE frage_id = ? AND ist_richtig = 1", (self.frage_id,))
-        richtige = [row[0] for row in c.fetchall()]
-        conn.close()
+
+        try:
+            response = (supabase.table("quiz_antworten")
+                        .select("antwort_text")
+                        .eq("frage_id", self.frage_id)
+                        .eq("ist_richtig", 1)
+                        .execute())
+        except Exception as e:
+            print("Fehler", e)
+
+        richtige = []
+        
+        for row in response.data:
+            richtige.append(row['antwort_text'])
+
         return "\n".join(richtige) # richtige antworten als text zurückgeben für lerneffekt
 
     def frage_bearbeiten(self):
@@ -266,17 +293,45 @@ class FrageBearbeitenDialog(QDialog):
         self.setWindowTitle("Frage bearbeiten")
         self.frage_id = frage_id
         layout = QVBoxLayout(self)
-        conn = sqlite3.connect(DB_PATH)
-        c = conn.cursor()
-        frage_row = c.execute("SELECT frage_text FROM frage WHERE id = ?", (frage_id,)).fetchone()
-        self.frage_input = QLineEdit(frage_row[0] if frage_row else "")
+        try:
+            response = (
+                supabase.table("quiz_fragen")
+            .select("frage_text", count="exact")
+            .eq("id", frage_id)
+            .execute()
+            )
+
+        except Exception as e:
+            print("Fehler beim Laden", e)
+        
+        #conn = sqlite3.connect(DB_PATH)
+        #  = conn.cursor()
+
+        # hier könnte man wieder das mit dem count machen!
+
+        #frage_row = c.execute("SELECT frage_text FROM frage WHERE id = ?", (frage_id,)).fetchone()
+        self.frage_input = QLineEdit(response.data[0]['frage_text'] if response.count == 1 else "")
         layout.addWidget(QLabel("Fragetext:"))
         layout.addWidget(self.frage_input)
         self.antwort_inputs = []
         self.richtig_checks = []
-        c.execute("SELECT id, antwort_text, ist_richtig FROM antwort WHERE frage_id = ?", (frage_id,))
-        antworten = c.fetchall()
-        for antwort_id, antwort_text, ist_richtig in antworten:
+        try:
+            response = (supabase.table("quiz_antworten")
+            .select("antwort_text, ist_richtig, id")
+            .eq("frage_id", frage_id)
+            .execute()
+            )
+        except Exception as e:
+            print("fehler in fragebeareitenn beim laden antworten")
+        #c.execute("SELECT id, antwort_text, ist_richtig FROM antwort WHERE frage_id = ?", (frage_id,))
+        #antworten = c.fetchall()
+
+        antworten = response.data 
+        for antwort in antworten:
+            antwort_id = antwort['id']
+            antwort_text = antwort['antwort_text']
+            ist_richtig = antwort['ist_richtig']
+   
             h = QHBoxLayout()
             inp = QLineEdit(antwort_text)
             chk = QCheckBox("Richtig")
@@ -286,12 +341,16 @@ class FrageBearbeitenDialog(QDialog):
             layout.addLayout(h)
             self.antwort_inputs.append((antwort_id, inp))
             self.richtig_checks.append(chk)
-        conn.close()
+        #conn.close()
         btn_save = QPushButton("Speichern")
         layout.addWidget(btn_save)
         btn_save.clicked.connect(self.speichern)
 
     def speichern(self):
+        print("#########################")
+        print("speichern")
+        print("#########################")
+
         """
         speichert die änderungen in der datenbank
         wichtig: id wird verwendet um die frage und antworten in der datenbank zu finden und zu aktualisieren
@@ -303,15 +362,42 @@ class FrageBearbeitenDialog(QDialog):
         if not frage_text:
             QMessageBox.warning(self, "Fehler", "Fragetext darf nicht leer sein.")
             return
-        conn = sqlite3.connect(DB_PATH)
-        c = conn.cursor()
-        c.execute("UPDATE frage SET frage_text = ? WHERE id = ?", (frage_text, self.frage_id))
+
+        try: 
+            print("trying...")
+            print("frage_text " + frage_text)
+            print("frage_id " + str(self.frage_id))
+
+            (supabase.table("quiz_fragen")
+            .update({"frage_text": frage_text})
+            .eq("id", self.frage_id)
+            .execute())
+            
+        except Exception as e:
+            print("Fehler beim speichern", e)
+        #conn = sqlite3.connect(DB_PATH)
+        #c = conn.cursor()
+        #c.execute("UPDATE frage SET frage_text = ? WHERE id = ?", (frage_text, self.frage_id))
+        
         for (antwort_id, inp), chk in zip(self.antwort_inputs, self.richtig_checks):
-            antwort_text = inp.text().strip()
-            ist_richtig = 1 if chk.isChecked() else 0
-            c.execute("UPDATE antwort SET antwort_text = ?, ist_richtig = ? WHERE id = ?", (antwort_text, ist_richtig, antwort_id))
-        conn.commit()
-        conn.close()
+            antwort_text    = inp.text().strip()
+            ist_richtig     = 1 if chk.isChecked() else 0
+
+            try: 
+                (
+                    supabase.table("quiz_antworten")
+                    .update({"antwort_text": antwort_text, "ist_richtig": ist_richtig})
+                    .eq("id", antwort_id)
+                    .execute()
+                )
+
+            except Exception as e:
+                print("FEHER BEIM SPEICHERN")
+                print(e)
+            #c.execute("UPDATE antwort SET antwort_text = ?, ist_richtig = ? WHERE id = ?", (antwort_text, ist_richtig, antwort_id))
+        #conn.commit()
+        #conn.close()
+     
         QMessageBox.information(self, "Erfolg", "Frage aktualisiert.")
         self.accept()
 
