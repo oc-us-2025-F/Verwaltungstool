@@ -16,14 +16,6 @@ from verwaltungstool.login import login
 
 from verwaltungstool.supabase_client import supabase
 
-
-#-------------------------------------------------------------------------------------------------
-# pfade 
-##-------------------------------------------------------------------------------------------------
-
-DB_PATH = settings.QUIZ_DB
-SCORES_PATH = settings.QUIZ_JSON
-
 #-------------------------------------------------------------------------------------------------
 # code begin 
 ##-------------------------------------------------------------------------------------------------
@@ -52,41 +44,54 @@ def create_valid_json():
 
 
 def lade_scores():
- 
 
-    # "quiz_scores"
-    response = (supabase.table("quiz_scores").select('*',count= 'exact').execute())
+    response = (
+        supabase.table("quiz_scores")
+        .select('*',count= 'exact')
+        .execute()
+    )
+
     if response.count == 0 or response.data[0]['quiz_score_data'] is None:
         valid_starting_json = create_valid_json()
-        response = (supabase.table('quiz_scores')
-                    .upsert({'user_id': supabase.auth.get_user().user.id, 'quiz_score_data': valid_starting_json}, on_conflict="user_id")
-                    .execute())
+        response = (
+            supabase.table('quiz_scores')
+            .upsert(
+                {
+                    'user_id': supabase.auth.get_user().user.id, 
+                    'quiz_score_data': valid_starting_json
+                }
+                ,on_conflict="user_id"
+            )
+            .execute()
+        )
         return valid_starting_json
 
     return response.data[0]['quiz_score_data']
 
-
 def speichere_scores(scores):
     try:
-        response = (supabase.table("quiz_scores")
-                    .upsert({'user_id': supabase.auth.get_user().user.id, 'quiz_score_data': scores}, on_conflict="user_id")
-                    .execute())
+        response = (
+            supabase.table("quiz_scores")
+            .upsert({'user_id': supabase.auth.get_user().user.id, 'quiz_score_data': scores}, on_conflict="user_id")
+            .execute()
+        )
     except Exception as e:
         print("fehler speichen scores_quiz in supabase", e)
     
-
 #---------------------------------------------------------------------------------------------------------------------------------------------
 # Hilfsfunktion: Hole Frage mit höchstem Fehler-Count
 #---------------------------------------------------------------------------------------------------------------------------------------------
-import sqlite3 #to connect to the database könnte ich nach oben setzen wollte es aber hier haben
+
 def frage_mit_hoechstem_count():
     """Finde die Frage mit dem höchsten Fehler-Count."""
     scores = lade_scores()
 
     try: 
-        response = (supabase.table("quiz_fragen")
-        .select("id, frage_text")
-        .execute())
+        response = (
+            supabase.table("quiz_fragen")
+            .select("id, frage_text")
+            .execute()
+        )
     except Exception as e:
         print(" fehler in daten bank abfrage ")
 
@@ -94,15 +99,15 @@ def frage_mit_hoechstem_count():
     #TODO: implementieren: Regel um zu verhindern, dass die gleiche Frage direkt nacheinander gestellt wird
     max_count = -9999
     beste_frage = None
-    for ergebnis_zeile in response.data:
-        frage_id = ergebnis_zeile['id']
-        frage_text = ergebnis_zeile['frage_text']
-        count = scores.get(str(frage_id), 0)
-        print("frage_id: " + str(frage_id) + " count: " + str(count))
+    for row in response.data:
+        frage_id    = row['id']
+        frage_text  = row['frage_text']
+        count       = scores.get(str(frage_id), 0)
+        
         if count > max_count:
             max_count = count
             beste_frage = (frage_id, frage_text)
-            print("BF: ",  beste_frage)
+
     return beste_frage
 ##---------------------------------------------------------------------------------------------------------------------------------------------
 # hhauptmenü
@@ -133,10 +138,8 @@ class QuizMainWindow(QWidget):
     def frage_beantworten(self):
         """
         öffnet das popup zum beantworten der frage mit dem höchsten fehler count
-
-
-
         """
+
         frage = frage_mit_hoechstem_count()
         if not frage:
             QMessageBox.information(self, "Info", "Keine Fragen vorhanden.")
@@ -147,9 +150,7 @@ class QuizMainWindow(QWidget):
     def frage_hinzufuegen(self):
         """
         öffnet das popup zum hinzufügen einer neuen frage
-
         """
-
 
         dialog = FrageHinzufuegenDialog(self)
         dialog.exec()
@@ -163,8 +164,8 @@ class FrageBeantwortenDialog(QDialog):
         zum beantworten einer frage
         werden dabei die antworten aus der datenbank geladen und als checkboxen angezeigt 
         id wird verwendet um die gegebenene antworten zu zu ordnen 
-
         """
+
         super().__init__(parent)
         self.setWindowTitle("Frage beantworten")
         self.frage_id = frage_id
@@ -180,7 +181,7 @@ class FrageBeantwortenDialog(QDialog):
                     .select("id, antwort_text, ist_richtig")
                     .eq("frage_id", frage_id)
                     .execute()
-                )
+            )
             
             antworten = response.data
             
@@ -188,15 +189,17 @@ class FrageBeantwortenDialog(QDialog):
             print("Fehler beim Laden", e)
             
         for row in antworten:
-            antwort_id = row['id']
-            antwort_text = row['antwort_text']
-            ist_richtig = row['ist_richtig']
-            cb = QCheckBox(antwort_text)
+            antwort_id      = row['id']
+            antwort_text    = row['antwort_text']
+            ist_richtig     = row['ist_richtig']
+            cb              = QCheckBox(antwort_text)
+
             cb.setProperty("antwort_id", antwort_id)
             layout.addWidget(cb)
             self.antwort_checkboxes.append(cb)
             if ist_richtig:
                 self.richtig_ids.add(antwort_id)
+
         #------------------
         # Buttons <-------- menü steuerung im fragen beantworten screen
         #------------------
@@ -232,6 +235,7 @@ class FrageBeantwortenDialog(QDialog):
             if parent:
                 parent.frage_beantworten()
             return
+        
         gewaehlte = set(cb.property("antwort_id") for cb in self.antwort_checkboxes if cb.isChecked())
         scores = lade_scores()
         frage_id_str = str(self.frage_id)
@@ -253,11 +257,13 @@ class FrageBeantwortenDialog(QDialog):
         """
 
         try:
-            response = (supabase.table("quiz_antworten")
-                        .select("antwort_text")
-                        .eq("frage_id", self.frage_id)
-                        .eq("ist_richtig", 1)
-                        .execute())
+            response = (
+                supabase.table("quiz_antworten")
+                    .select("antwort_text")
+                    .eq("frage_id", self.frage_id)
+                    .eq("ist_richtig", 1)
+                    .execute()
+            )
         except Exception as e:
             print("Fehler", e)
 
@@ -288,7 +294,7 @@ class FrageBearbeitenDialog(QDialog):
         bedenken: änderungen werden direkt in der datenbank gespeichert beim klicken auf speichern
 
         """
-        #TODO implementieren git automatik für DB
+
         super().__init__(parent)
         self.setWindowTitle("Frage bearbeiten")
         self.frage_id = frage_id
@@ -303,34 +309,27 @@ class FrageBearbeitenDialog(QDialog):
 
         except Exception as e:
             print("Fehler beim Laden", e)
-        
-        #conn = sqlite3.connect(DB_PATH)
-        #  = conn.cursor()
-
-        # hier könnte man wieder das mit dem count machen!
-
-        #frage_row = c.execute("SELECT frage_text FROM frage WHERE id = ?", (frage_id,)).fetchone()
+ 
         self.frage_input = QLineEdit(response.data[0]['frage_text'] if response.count == 1 else "")
         layout.addWidget(QLabel("Fragetext:"))
         layout.addWidget(self.frage_input)
         self.antwort_inputs = []
         self.richtig_checks = []
         try:
-            response = (supabase.table("quiz_antworten")
-            .select("antwort_text, ist_richtig, id")
-            .eq("frage_id", frage_id)
-            .execute()
+            response = (
+                supabase
+                    .table("quiz_antworten")
+                    .select("antwort_text, ist_richtig, id")
+                    .eq("frage_id", frage_id)
+                    .execute()
             )
         except Exception as e:
             print("fehler in fragebeareitenn beim laden antworten")
-        #c.execute("SELECT id, antwort_text, ist_richtig FROM antwort WHERE frage_id = ?", (frage_id,))
-        #antworten = c.fetchall()
 
-        antworten = response.data 
-        for antwort in antworten:
-            antwort_id = antwort['id']
-            antwort_text = antwort['antwort_text']
-            ist_richtig = antwort['ist_richtig']
+        for row in response.data:
+            antwort_id      = row['id']
+            antwort_text    = row['antwort_text']
+            ist_richtig     = row['ist_richtig']
    
             h = QHBoxLayout()
             inp = QLineEdit(antwort_text)
@@ -341,22 +340,17 @@ class FrageBearbeitenDialog(QDialog):
             layout.addLayout(h)
             self.antwort_inputs.append((antwort_id, inp))
             self.richtig_checks.append(chk)
-        #conn.close()
+
         btn_save = QPushButton("Speichern")
         layout.addWidget(btn_save)
         btn_save.clicked.connect(self.speichern)
 
     def speichern(self):
-        print("#########################")
-        print("speichern")
-        print("#########################")
-
         """
         speichert die änderungen in der datenbank
         wichtig: id wird verwendet um die frage und antworten in der datenbank zu finden und zu aktualisieren
         denke dran git push wird aufzurufen nach dem speichern um die änderungen für alle nutzer verfügbar zu machen
         """
-        #TODO: implementieren einer git push funktion nach dem speichern
 
         frage_text = self.frage_input.text().strip()
         if not frage_text:
@@ -364,14 +358,12 @@ class FrageBearbeitenDialog(QDialog):
             return
 
         try: 
-            print("trying...")
-            print("frage_text " + frage_text)
-            print("frage_id " + str(self.frage_id))
-
-            (supabase.table("quiz_fragen")
-                .update({"frage_text": frage_text})
-                .eq("id", self.frage_id)
-                .execute()
+            (
+                supabase
+                    .table("quiz_fragen")
+                    .update({"frage_text": frage_text})
+                    .eq("id", self.frage_id)
+                    .execute()
             )
             
         except Exception as e:
@@ -383,10 +375,11 @@ class FrageBearbeitenDialog(QDialog):
 
             try: 
                 (
-                    supabase.table("quiz_antworten")
-                    .update({"antwort_text": antwort_text, "ist_richtig": ist_richtig})
-                    .eq("id", antwort_id)
-                    .execute()
+                    supabase
+                        .table("quiz_antworten")
+                        .update({"antwort_text": antwort_text, "ist_richtig": ist_richtig})
+                        .eq("id", antwort_id)
+                        .execute()
                 )
 
             except Exception as e:
@@ -460,9 +453,10 @@ class FrageHinzufuegenDialog(QDialog):
 
         
         response = (
-            supabase.table("quiz_fragen")
-            .insert({'frage_text': frage_text, 'quiz_id' : 1})
-            .execute()
+            supabase
+                .table("quiz_fragen")
+                .insert({'frage_text': frage_text, 'quiz_id' : 1})
+                .execute()
         )
 
         neue_id = response.data[0]['id']
