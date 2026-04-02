@@ -43,7 +43,7 @@ def create_valid_json():
         print("ID: ")
         print(id[0])
         json_data[id[0]] = 0
-    return json.dumps(json_data, indent=2)
+    return json_data
 
 def lade_scores():
  
@@ -55,7 +55,7 @@ def lade_scores():
         response = (supabase.table('quiz_scores')
                     .upsert({'user_id': supabase.auth.get_user().user.id, 'quiz_score_data': valid_starting_json}, on_conflict="user_id")
                     .execute())
-        return json.loads(valid_starting_json)
+        return valid_starting_json
 
     return response.data[0]['quiz_score_data']
 
@@ -390,6 +390,11 @@ class FrageHinzufuegenDialog(QDialog):
             c.execute("INSERT INTO antwort (antwort_text, frage_id, ist_richtig) VALUES (?, ?, ?)", (antwort_text, neue_id, ist_richtig))
         conn.commit()
         conn.close()
+        scores = lade_scores()
+        scores[neue_id] = 0
+        speichere_scores(scores)
+
+
         QMessageBox.information(self, "Erfolg", "Frage hinzugefügt.")
         self.accept()
 

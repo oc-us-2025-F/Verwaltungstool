@@ -175,7 +175,6 @@ class QuotesFenster(QWidget):
 
 class MainWindow(QMainWindow):
     def __init__(self):
-        print("CWD" + os.getcwd())
         super().__init__()
         self.setWindowTitle("Verwaltungstool")
 

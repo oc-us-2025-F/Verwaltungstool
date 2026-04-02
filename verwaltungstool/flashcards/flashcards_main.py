@@ -11,6 +11,9 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt
 
 from verwaltungstool.config import settings
+from verwaltungstool.login import login
+
+from verwaltungstool.supabase_client import supabase
 
 
 #-------------------------------------------------------------------------------------------------
@@ -24,18 +27,45 @@ SCORES_PATH = settings.FLASHCARDS_JSON
 #-------------------------------------------------------------------------------------------------
 # code begin 
 ##-------------------------------------------------------------------------------------------------
+def create_valid_json():
+
+    conn = sqlite3.connect(DB_PATH)
+    print(DB_PATH)
+    c = conn.cursor()
+    c.execute("SELECT id FROM frage")
+    json_data = {}
+    fragen = c.fetchall()
+
+    conn.close()
+
+    for id in fragen:
+        print("ID: ")
+        print(id[0])
+        json_data[id[0]] = 0
+    return json_data
 
 def lade_scores():
-    """Lade Scores aus JSON-Datei."""
-    if not os.path.exists(SCORES_PATH):
-        return {}
-    with open(SCORES_PATH, "r", encoding="utf-8") as f:
-        return json.load(f)
+ 
+
+    # "quiz_scores"
+    response = (supabase.table("flashcards_scores").select('*',count= 'exact').execute())
+    if response.count == 0 or response.data[0]['flashcards_score_data'] is None:
+        valid_starting_json = create_valid_json()
+        response = (supabase.table('flashcards_scores')
+                    .upsert({'user_id': supabase.auth.get_user().user.id, 'flashcards_score_data': valid_starting_json}, on_conflict="user_id")
+                    .execute())
+        return valid_starting_json
+
+    return response.data[0]['flashcards_score_data']
+
 
 def speichere_scores(scores):
-    """Speichere Scores in JSON-Datei."""
-    with open(SCORES_PATH, "w", encoding="utf-8") as f:
-        json.dump(scores, f, indent=2)
+    try:
+        response = (supabase.table("flashcards_scores")
+                    .upsert({'user_id': supabase.auth.get_user().user.id, 'flashcards_score_data': scores}, on_conflict="user_id")
+                    .execute())
+    except Exception as e:
+        print("fehler speichen scores_flashcards in supabase", e)
 #---------------------------------------------------------------------------------------------------------------------------------------------
 # Hilfsfunktion: Hole Frage mit höchstem Fehler-Count
 #---------------------------------------------------------------------------------------------------------------------------------------------
@@ -349,11 +379,21 @@ class FrageHinzufuegenDialog(QDialog):
             c.execute("INSERT INTO antwort (antwort_text, frage_id, ist_richtig) VALUES (?, ?, ?)", (antwort_text, neue_id, ist_richtig))
         conn.commit()
         conn.close()
+        scores = lade_scores()
+        scores[neue_id] = 0
+        speichere_scores(scores)
         QMessageBox.information(self, "Erfolg", "Frage hinzugefügt.")
         self.accept()
 
 if __name__ == "__main__":
+    try: 
+        login()
+        print ("HALLO AUS MAIN FLASHCARDS")
+    except Exception as e:
+        print("Login nicht möglich FLASHCARDS!")
+        sys.exit(0)
+
     app = QApplication(sys.argv)
-    window = QuizMainWindow()
+    window = FlashcardsMainWindow()
     window.show()
     sys.exit(app.exec())
