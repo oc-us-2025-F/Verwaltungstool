@@ -55,7 +55,6 @@ tenacity==9.1.4
 typing-inspection==0.4.2
 typing_extensions==4.15.0
 urllib3==2.6.3
--e git+ssh://git@github.com/oc-us-2025-F/Verwaltungstool.git@0a1dbf0c99c8bf3f3ef829a74c0e322424ff13e4#egg=verwaltungstool
 websockets==15.0.1
 yarl==1.23.0
 zstandard==0.25.0

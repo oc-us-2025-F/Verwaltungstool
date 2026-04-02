@@ -8,6 +8,8 @@ from datetime import datetime, timedelta
 
 from verwaltungstool.config import settings
 
+from verwaltungstool.supabase_client import supabase
+
 
 CLASS_JSON_FILE = settings.CALENDAR_JSON
 
@@ -120,14 +122,41 @@ class AttendanceCalendar(QWidget):
 
     def load_data(self):
         try:
-            with open(CLASS_JSON_FILE, "r", encoding="utf-8") as f:
-                return json.load(f)
-        except FileNotFoundError:
-            return {}
+
+            response = (
+                supabase.table("attendance_calendars")
+                .select("*", count="exact")
+                .execute()
+            )
+
+            if response.count == 0:
+                response = (supabase.table("attendance_calendars")
+                .insert({"user_id" : supabase.auth.get_user().user.id, "calendar_data" : None})
+                .execute()
+                )
+                return {}
+            
+            if response.data[0]['calendar_data'] == None:
+                return {}
+            
+            return response.data[0]['calendar_data']
+        
+        except Exception as e:
+            print("Fehler: " + e)
 
     def save_data(self):
-        with open(CLASS_JSON_FILE, "w", encoding="utf-8") as f:
-            json.dump(self.attendance, f, indent=2, ensure_ascii=False)
+
+        try: 
+            response = (supabase.table("attendance_calendars")
+                .upsert({"user_id" : supabase.auth.get_user().user.id, "calendar_data" : self.attendance},
+                        on_conflict="user_id")
+                .execute()
+            )
+
+            print(">>> Daten gespeichert <<<")
+            
+        except Exception as e:
+            print("Fehler beim Aktualisieren der Kalender-Daten: " + e)
 
     def on_date_clicked(self, qdate: QDate):
         date_str = qdate.toString("yyyy-MM-dd")

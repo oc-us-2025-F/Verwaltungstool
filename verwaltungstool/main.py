@@ -26,6 +26,8 @@ from utils.markdown_viewer import MarkdownViewerDialog
 
 from verwaltungstool.config import settings
 
+from verwaltungstool.login import login
+
 # AP2 Lernkarten Quiz
 
 from verwaltungstool.flashcards.flashcards_main import FlashcardsMainWindow
@@ -173,7 +175,6 @@ class QuotesFenster(QWidget):
 
 class MainWindow(QMainWindow):
     def __init__(self):
-        print("CWD" + os.getcwd())
         super().__init__()
         self.setWindowTitle("Verwaltungstool")
 
@@ -380,6 +381,15 @@ class MainWindow(QMainWindow):
         QApplication.quit()
 
 if __name__ == "__main__":
+
+    # Aufruf der Login Funktion
+
+    try: 
+        login()
+    except Exception as e:
+        print("Login nicht möglich!")
+        sys.exit(0)
+
     app = QApplication(sys.argv)
     window = MainWindow()
     window.show()
